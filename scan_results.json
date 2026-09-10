@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "reference_image": "C:\\Users\\dell\\Pictures\\person.jpg.jpg",
+  "folder": ".\\test_photos",
+  "threshold": 0.8,
+  "images_scanned": 2,
+  "matches_found": 1,
+  "results": [
+    {
+      "image": ".\\test_photos\\person2.jpg",
+      "similarity": 0.8056825995445251,
+      "match": true
+    },
+    {
+      "image": ".\\test_photos\\person3.jpg",
+      "similarity": 0.7925494313240051,
+      "match": false
+    }
+  ]
+}

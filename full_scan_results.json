@@ -1,0 +1,618 @@
+{
+    "reference_image": "C:\\Users\\dell\\OneDrive\\Desktop\\Rohit Sharma\\Image_2.jpg",
+    "scan_folder": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l",
+    "match_threshold": 0.4,
+    "uncertain_threshold": 0.3,
+    "summary": {
+        "images_found": 75,
+        "images_processed": 74,
+        "matches": 25,
+        "uncertain": 0,
+        "no_matches": 49,
+        "no_faces": 0,
+        "no_person": 1,
+        "errors": 0
+    },
+    "results": [
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_1 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.079843,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_1 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.135056,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_1.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.545396,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_10 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": -0.00242,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_10 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.095699,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_10.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.635185,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_11 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.125324,
+            "faces_detected": 3,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_11 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.126538,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_11.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.512584,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_12 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.055776,
+            "faces_detected": 2,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_12 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.076199,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_12.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.593521,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_13 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.114909,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_13 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.120473,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_13.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.517804,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_14 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.05822,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_14 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.084191,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_14.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.545047,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_15 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.122261,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_15 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.112667,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_15.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.487589,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_16 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.082543,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_16 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.107682,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_16.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.472082,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_17 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": -0.071683,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_17 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.056876,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_17.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.558874,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_18 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.048974,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_18 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.135995,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_18.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.609422,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_19 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.116686,
+            "faces_detected": 3,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_19 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.102695,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_19.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.514312,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_2 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.037724,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_2 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.022568,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_2.jpg",
+            "status": "MATCH",
+            "best_similarity": 1.0,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_20 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.100046,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_20 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.126875,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_20.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.523048,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_21 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.047227,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_21 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.141781,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_21.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.52387,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_22 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.109204,
+            "faces_detected": 7,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_22 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.145172,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_22.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.545355,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_23 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.1155,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_23 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.082457,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_23.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.583957,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_24 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.032397,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_24 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.159664,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_24.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.5901,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_25 (2).jpg",
+            "status": "NO_PERSON",
+            "best_similarity": null,
+            "faces_detected": 0,
+            "person_detected": false,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_25 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.115037,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_25.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.651095,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_3 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.101509,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_3.jpeg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.04959,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_3.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.589049,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_4 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.053619,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_4 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.09659,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_4.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.579495,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_5 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.030737,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_5 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.131805,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_5.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.623338,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_6 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.117205,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_6 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.028097,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_6.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.617216,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_7 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.095095,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_7.jpeg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.13272,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_7.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.500335,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_8 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.09745,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_8 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.14526,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_8.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.508717,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_9 (2).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.101639,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_9 (3).jpg",
+            "status": "NO_MATCH",
+            "best_similarity": 0.161497,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        },
+        {
+            "image": "C:\\Temp\\ai-person-photo-finder\\zip_1787805611715_cdjkj9l\\Rohit Sharma\\Image_9.jpg",
+            "status": "MATCH",
+            "best_similarity": 0.524906,
+            "faces_detected": 1,
+            "person_detected": true,
+            "error": null
+        }
+    ]
+}

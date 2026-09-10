@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WORKSPACE.AI — Portal Access</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    body {
+      background-color: #000000;
+      font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    .font-cinematic {
+      font-family: 'Syncopate', sans-serif;
+      letter-spacing: 0.25em;
+      font-weight: 400;
+    }
+
+    /* Fixed WebGL 3D Galaxy Canvas */
+    #galaxyCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Cinematic Lunar Horizon / Planetary Eclipse Curve */
+    .lunar-eclipse-horizon {
+      position: fixed;
+      top: -380px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130vw;
+      height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(12, 16, 26, 0.85) 0%, rgba(3, 5, 10, 0.95) 75%, rgba(0, 0, 0, 1) 100%);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 15px 80px rgba(255, 255, 255, 0.25), 0 35px 140px rgba(66, 133, 244, 0.25);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Google 4-Color Top Accent Line */
+    .google-border-top {
+      background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
+      height: 3px;
+      width: 100%;
+    }
+
+    /* Lunar Specular Glass Surfaces */
+    .lunar-modal {
+      background: rgba(10, 14, 22, 0.75);
+      backdrop-filter: blur(36px);
+      -webkit-backdrop-filter: blur(36px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-lunar-primary {
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid #ffffff;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .btn-lunar-primary:hover {
+      background: #e2e8f0;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.45);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4 min-h-screen relative overflow-x-hidden">
+
+  <!-- 3D LIVE THREE.JS ROTATING MILKY WAY CANVAS -->
+  <canvas id="galaxyCanvas"></canvas>
+
+  <!-- LUNAR CRESCENT PLANETARY HORIZON -->
+  <div class="lunar-eclipse-horizon"></div>
+
+  <!-- TOP ACCENT LINE -->
+  <div class="fixed top-0 left-0 right-0 z-50 google-border-top"></div>
+
+  <!-- Auth Card Container -->
+  <div class="lunar-modal w-full max-w-md rounded-[2.5rem] p-8 relative space-y-6 z-10">
+    
+    <!-- Header -->
+    <div class="text-center space-y-3">
+      <div class="relative w-14 h-14 mx-auto rounded-2xl p-[1.5px] bg-gradient-to-tr from-[#4285F4] via-[#EA4335] to-[#34A853] shadow-lg shadow-white/5">
+        <div class="w-full h-full rounded-[14px] bg-black flex items-center justify-center p-2 overflow-hidden text-white">
+          <i data-lucide="camera" class="w-6 h-6"></i>
+        </div>
+      </div>
+      <h2 class="font-cinematic text-lg sm:text-xl font-light tracking-[0.25em] text-white uppercase" id="formTitle">SIGN IN</h2>
+      <p class="text-xs text-slate-400 font-medium" id="formSubtitle">Access your studio collections & face recognition pipeline</p>
+    </div>
+
+    <!-- Toggle Tabs -->
+    <div class="flex p-1 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold">
+      <button type="button" onclick="switchTab('signin')" id="tabSignIn" class="flex-1 py-2.5 rounded-xl bg-white text-black shadow-sm transition cursor-pointer">Sign In</button>
+      <button type="button" onclick="switchTab('register')" id="tabRegister" class="flex-1 py-2.5 rounded-xl text-slate-400 hover:text-white transition cursor-pointer">Create Account</button>
+    </div>
+
+    <!-- Error Alert Box -->
+    <div id="errorAlert" class="hidden p-3.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold text-center leading-relaxed"></div>
+
+    <!-- Auth Form -->
+    <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+      
+      <!-- Full Name (Register Only) -->
+      <div id="nameField" class="hidden space-y-1.5">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Full Name</label>
+        <div class="relative flex items-center">
+          <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
+          <input type="text" id="nameInput" placeholder="e.g. Studio Name" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-black/60 focus:border-white/40 focus:ring-1 focus:ring-white/30 outline-none text-xs sm:text-sm text-white placeholder-slate-500 font-medium">
+        </div>
+      </div>
+
+      <!-- Email Address -->
+      <div class="space-y-1.5">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Email Address</label>
+        <div class="relative flex items-center">
+          <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
+          <input type="email" id="emailInput" required placeholder="photographer@studio.com" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-black/60 focus:border-white/40 focus:ring-1 focus:ring-white/30 outline-none text-xs sm:text-sm text-white placeholder-slate-500 font-medium">
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="space-y-1.5">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Password</label>
+        <div class="relative flex items-center">
+          <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
+          <input type="password" id="passwordInput" required placeholder="••••••••" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-black/60 focus:border-white/40 focus:ring-1 focus:ring-white/30 outline-none text-xs sm:text-sm text-white placeholder-slate-500 font-medium">
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-full btn-lunar-primary font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer mt-3">
+        <span id="submitBtnText">Sign In to Workspace</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+
+    </form>
+
+  </div>
+
+  <!-- ================= THREE.JS 3D MILKY WAY SIMULATION ================= -->
+  <script>
+    const galaxyCanvas = document.getElementById('galaxyCanvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 30, 48);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: galaxyCanvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const parameters = {
+      count: 36000,
+      size: 0.019,
+      radius: 48,
+      branches: 2,
+      spin: 1.25,
+      randomness: 0.62,
+      power: 3.8,
+      insideColor: '#ffffff',
+      outsideColor: '#7aa2f7'
+    };
+
+    let geometry = null;
+    let material = null;
+    let points = null;
+
+    function generateMilkyWay() {
+      geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(parameters.count * 3);
+      const colors = new Float32Array(parameters.count * 3);
+
+      const colorInside = new THREE.Color(parameters.insideColor);
+      const colorOutside = new THREE.Color(parameters.outsideColor);
+      const dustSilver = new THREE.Color('#cbd5e1');
+
+      for (let i = 0; i < parameters.count; i++) {
+        const i3 = i * 3;
+        const r = Math.random() * parameters.radius;
+        const spinAngle = r * parameters.spin;
+        const branchAngle = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+
+        const randomX = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * r;
+        const randomY = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * (r * 0.45);
+        const randomZ = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * r;
+
+        positions[i3] = Math.cos(branchAngle + spinAngle) * r + randomX;
+        positions[i3 + 1] = randomY;
+        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * r + randomZ;
+
+        const mixedColor = colorInside.clone();
+        mixedColor.lerp(colorOutside, r / parameters.radius);
+        if (r > 6 && r < 20 && Math.random() > 0.6) mixedColor.lerp(dustSilver, 0.4);
+
+        colors[i3] = mixedColor.r;
+        colors[i3 + 1] = mixedColor.g;
+        colors[i3 + 2] = mixedColor.b;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      material = new THREE.PointsMaterial({
+        size: parameters.size,
+        sizeAttenuation: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.9
+      });
+
+      points = new THREE.Points(geometry, material);
+      points.rotation.x = 0.55;
+      scene.add(points);
+    }
+    generateMilkyWay();
+
+    let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+
+    const clock = new THREE.Clock();
+    function animateGalaxy() {
+      const elapsedTime = clock.getElapsedTime();
+      if (points) {
+        points.rotation.y = elapsedTime * 0.038;
+        targetX += (mouseX * 0.2 - targetX) * 0.05;
+        targetY += (mouseY * 0.15 - targetY) * 0.05;
+        points.rotation.z = targetX;
+        points.rotation.x = 0.55 + targetY;
+      }
+      renderer.render(scene, camera);
+      requestAnimationFrame(animateGalaxy);
+    }
+    animateGalaxy();
+  </script>
+
+  <!-- ================= AUTH LOGIC SCRIPT ================= -->
+  <script>
+    let mode = 'signin';
+
+    function switchTab(newMode) {
+      mode = newMode;
+      const errorBox = document.getElementById('errorAlert');
+      errorBox.classList.add('hidden');
+      errorBox.innerText = '';
+
+      const tabSignIn = document.getElementById('tabSignIn');
+      const tabRegister = document.getElementById('tabRegister');
+      const nameField = document.getElementById('nameField');
+      const nameInput = document.getElementById('nameInput');
+      const formTitle = document.getElementById('formTitle');
+      const formSubtitle = document.getElementById('formSubtitle');
+      const submitBtnText = document.getElementById('submitBtnText');
+
+      if (mode === 'signin') {
+        tabSignIn.className = 'flex-1 py-2.5 rounded-xl bg-white text-black shadow-sm font-bold transition';
+        tabRegister.className = 'flex-1 py-2.5 rounded-xl text-slate-400 hover:text-white font-bold transition';
+        nameField.classList.add('hidden');
+        nameInput.removeAttribute('required');
+        formTitle.innerText = 'SIGN IN';
+        formSubtitle.innerText = 'Access your studio collections & face recognition pipeline';
+        submitBtnText.innerText = 'Sign In to Workspace';
+      } else {
+        tabRegister.className = 'flex-1 py-2.5 rounded-xl bg-white text-black shadow-sm font-bold transition';
+        tabSignIn.className = 'flex-1 py-2.5 rounded-xl text-slate-400 hover:text-white font-bold transition';
+        nameField.classList.remove('hidden');
+        nameInput.setAttribute('required', 'true');
+        formTitle.innerText = 'CREATE ACCOUNT';
+        formSubtitle.innerText = 'Register as a photographer to host and manage galleries';
+        submitBtnText.innerText = 'Register Account';
+      }
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const errorBox = document.getElementById('errorAlert');
+      const submitBtn = document.getElementById('submitBtn');
+      errorBox.classList.add('hidden');
+
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const name = document.getElementById('nameInput').value.trim();
+
+      const endpoint = mode === 'signin' ? '/api/auth/login' : '/api/auth/register';
+      const payload = mode === 'signin' 
+        ? { email, password } 
+        : { name, email, password };
+
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.7';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('auth_token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('auth_user', JSON.stringify(data.user));
+          sessionStorage.clear();
+
+          window.location.replace('/welcome.html');
+        } else {
+          errorBox.innerText = data.message || (mode === 'signin' ? 'Sign in failed.' : 'Registration failed.');
+          errorBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorBox.innerText = 'Network error. Please make sure the server is running.';
+        errorBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+      if (token) {
+        window.location.replace('welcome.html');
+      }
+    });
+  </script>
+</body>
+</html>

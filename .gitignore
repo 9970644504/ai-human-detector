@@ -1,0 +1,7 @@
+.venv-model/
+.venv/
+node_modules/
+_pycache_/
+models/
+.env
+*.pyc

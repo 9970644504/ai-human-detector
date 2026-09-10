@@ -1,0 +1,42 @@
+{
+  "name": "ai-human-detector",
+  "version": "1.0.0",
+  "description": "AI Human Detection and Localization Desktop Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "ai",
+    "human-detection",
+    "object-detection",
+    "electron",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^43.4.1"
+  },
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.19.0",
+    "adm-zip": "^0.6.0",
+    "archiver": "^8.0.0",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.3.0",
+    "mysql2": "^3.24.3",
+    "ndarray": "^1.1.1",
+    "ndarray-ops": "^1.2.2",
+    "onnxruntime-node": "^1.29.0",
+    "sharp": "^0.35.4",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1",
+    "unzipper": "^0.12.5"
+  }
+}

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Matched Photos — Event Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Client-side ZIP generation libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+    body {
+      background: url('beach-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .preview-backdrop {
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .custom-checkbox:checked {
+      background-color: #0d9488;
+      border-color: #0d9488;
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8 pb-32 text-slate-900 antialiased">
+  <div class="fixed inset-0 bg-white/30 backdrop-blur-sm -z-10"></div>
+
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Top Header Bar -->
+    <header class="glass-panel rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+      <div class="flex items-center gap-4 w-full md:w-auto">
+        <!-- Thumbnail of User's Selfie -->
+        <div class="relative w-14 h-14 rounded-2xl overflow-hidden shadow-md border-2 border-teal-500 bg-slate-100 shrink-0">
+          <img id="scanned-selfie-thumb" src="" alt="Your Selfie" class="w-full h-full object-cover hidden">
+          <div id="selfie-fallback-icon" class="w-full h-full flex items-center justify-center text-teal-600">
+            <i data-lucide="user" class="w-7 h-7"></i>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-teal-700 bg-teal-100 px-3 py-1 rounded-full">Results Found</span>
+          <h1 id="event-name-display" class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">Matched Photos</h1>
+          <p id="match-summary-text" class="text-xs text-slate-600 font-medium">Scanning results...</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons in Header -->
+      <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
+        <button id="select-all-btn" onclick="toggleSelectAll()" class="hidden px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-800 text-xs font-bold border border-slate-200 transition flex items-center gap-2 shadow-sm">
+          <i data-lucide="check-square" class="w-4 h-4 text-teal-600"></i> <span id="select-all-text">Select All</span>
+        </button>
+
+        <a id="back-gallery-link" href="gallery.html" class="px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-800 text-xs font-bold border border-slate-200 transition flex items-center gap-2 shadow-sm">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Gallery
+        </a>
+      </div>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div id="download-progress-bar" class="hidden glass-panel rounded-2xl p-4 transition duration-300">
+      <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+        <span id="progress-status-label" class="flex items-center gap-2">
+          <svg class="animate-spin h-3.5 w-3.5 text-teal-600" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Packaging your selected photos...
+        </span>
+        <span id="progress-percentage">0%</span>
+      </div>
+      <div class="w-full bg-slate-200/80 rounded-full h-2.5 overflow-hidden">
+        <div id="progress-bar-fill" class="bg-teal-600 h-2.5 rounded-full transition-all duration-200 w-0"></div>
+      </div>
+    </div>
+
+    <!-- Results Subheader -->
+    <div class="flex items-center justify-between text-xs font-semibold text-slate-600 px-2">
+      <span id="match-count-indicator">Showing matched images</span>
+      <span class="text-slate-500 hidden sm:inline">Use the checkboxes to pick specific photos</span>
+    </div>
+
+    <!-- Matched Photos Grid -->
+    <div id="matched-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- FLOATING SELECTION DOWNLOAD DOCK -->
+  <div id="selection-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 hidden transition-all duration-300">
+    <div class="glass-panel px-6 py-3.5 rounded-full shadow-2xl border border-white/90 flex items-center gap-3 sm:gap-4 bg-white/90">
+      <div class="flex items-center gap-2 pr-2 border-r border-slate-300">
+        <div class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></div>
+        <span id="selected-counter" class="text-xs font-extrabold text-slate-900 whitespace-nowrap">0 Selected</span>
+      </div>
+
+      <!-- Download Selected as ZIP -->
+      <button onclick="downloadSelectedAsZip()" class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold px-4 py-2 rounded-full transition flex items-center gap-1.5 shadow-md">
+        <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+        <span>Download ZIP</span>
+      </button>
+
+      <!-- Download Selected as Files -->
+      <button onclick="downloadSelectedIndividualFiles()" class="bg-slate-900 hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-full transition flex items-center gap-1.5 shadow-md">
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Download Files</span>
+      </button>
+
+      <!-- Clear Selection -->
+      <button onclick="clearAllSelections()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition" title="Clear selection">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN LIGHTBOX PREVIEW MODAL -->
+  <div id="matched-preview-modal" class="fixed inset-0 preview-backdrop z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="handleBackdropClick(event)">
+    <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-10 text-white select-none">
+      <div class="flex items-center gap-3">
+        <span id="preview-counter" class="text-xs font-semibold bg-white/10 px-3 py-1.5 rounded-full border border-white/20 backdrop-blur-md">1 / 1</span>
+        <span id="preview-confidence-badge" class="text-xs font-bold text-teal-300 bg-teal-950/80 px-3 py-1.5 rounded-full border border-teal-500/40"></span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a id="preview-download-btn" href="#" download="matched-photo.jpg" class="p-2.5 rounded-full bg-white/15 hover:bg-white/30 text-white transition border border-white/20 flex items-center justify-center shadow-lg" title="Download Image">
+          <i data-lucide="download" class="w-4 h-4"></i>
+        </a>
+        <button onclick="closeMatchedPreview()" class="p-2.5 rounded-full bg-white/15 hover:bg-rose-600 text-white transition border border-white/20 flex items-center justify-center shadow-lg" title="Close Preview (Esc)">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <button onclick="prevMatchedImage(event)" class="absolute left-3 sm:left-6 p-3 rounded-full bg-white/10 hover:bg-white/25 text-white transition border border-white/20 z-10 shadow-lg">
+      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+    </button>
+    <button onclick="nextMatchedImage(event)" class="absolute right-3 sm:right-6 p-3 rounded-full bg-white/10 hover:bg-white/25 text-white transition border border-white/20 z-10 shadow-lg">
+      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+    </button>
+
+    <div class="relative max-w-5xl max-h-[85vh] flex items-center justify-center select-none" onclick="event.stopPropagation()">
+      <img id="preview-image-elem" src="" alt="Matched Photo Full View" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl transition-transform duration-200">
+    </div>
+  </div>
+
+  <script>
+    let matchedPhotos = [];
+    let selectedIndices = new Set();
+    let currentPreviewIndex = 0;
+    let isDownloading = false;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventName = urlParams.get('event') || 'Event Gallery';
+    const eventSlug = urlParams.get('slug') || urlParams.get('id') || '';
+
+    const previewModal = document.getElementById('matched-preview-modal');
+    const previewImg = document.getElementById('preview-image-elem');
+    const previewCounter = document.getElementById('preview-counter');
+    const previewConfidence = document.getElementById('preview-confidence-badge');
+    const previewDownloadBtn = document.getElementById('preview-download-btn');
+
+    const downloadProgressBar = document.getElementById('download-progress-bar');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressStatusLabel = document.getElementById('progress-status-label');
+    const progressPercentage = document.getElementById('progress-percentage');
+
+    const selectionDock = document.getElementById('selection-dock');
+    const selectedCounterText = document.getElementById('selected-counter');
+    const selectAllBtn = document.getElementById('select-all-btn');
+    const selectAllText = document.getElementById('select-all-text');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('event-name-display').innerText = decodeURIComponent(eventName);
+
+      if (eventSlug) {
+        document.getElementById('back-gallery-link').href = `gallery.html?slug=${encodeURIComponent(eventSlug)}`;
+      }
+
+      const cachedSelfie = sessionStorage.getItem('ai_reference_selfie');
+      if (cachedSelfie) {
+        const thumb = document.getElementById('scanned-selfie-thumb');
+        thumb.src = cachedSelfie;
+        thumb.classList.remove('hidden');
+        document.getElementById('selfie-fallback-icon').classList.add('hidden');
+      }
+
+      const rawMatches = sessionStorage.getItem('ai_matched_results');
+      if (rawMatches) {
+        try {
+          matchedPhotos = JSON.parse(rawMatches);
+        } catch (e) {
+          matchedPhotos = [];
+        }
+      }
+
+      renderMatchedPhotos(matchedPhotos);
+      lucide.createIcons();
+    });
+
+    function renderMatchedPhotos(photos) {
+      const grid = document.getElementById('matched-grid');
+      const summary = document.getElementById('match-summary-text');
+      const counter = document.getElementById('match-count-indicator');
+
+      if (!photos || photos.length === 0) {
+        summary.innerText = "No matching faces found";
+        counter.innerText = "0 matches";
+        selectAllBtn.classList.add('hidden');
+        grid.innerHTML = `
+          <div class="col-span-full glass-panel rounded-3xl p-16 text-center space-y-4">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+              <i data-lucide="user-x" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">No matching photos found</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">We couldn't locate clear matches with this selfie. Try capturing another selfie with direct frontal lighting.</p>
+            <a href="${eventSlug ? `gallery.html?slug=${encodeURIComponent(eventSlug)}` : 'gallery.html'}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-sm">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> Try Again
+            </a>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      summary.innerText = `Found ${photos.length} photo(s) with your face`;
+      counter.innerText = `Showing ${photos.length} verified match(es)`;
+      selectAllBtn.classList.remove('hidden');
+
+      grid.innerHTML = photos.map((photo, index) => {
+        const photoUrl = photo.url || `/uploads/${photo.filename}`;
+        const filename = photo.filename || `matched-${index + 1}.jpg`;
+        const confidence = photo.confidence ? `${photo.confidence}% Match` : '';
+        const isSelected = selectedIndices.has(index);
+
+        return `
+          <div id="matched-card-${index}" class="group relative aspect-[4/5] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 bg-white border ${isSelected ? 'border-teal-500 ring-4 ring-teal-500/20' : 'border-white'} cursor-pointer" onclick="openMatchedPreview(${index})">
+            <img src="${photoUrl}" alt="${filename}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+
+            <!-- Checkbox Toggle -->
+            <div class="absolute top-3 right-3 z-30" onclick="event.stopPropagation()">
+              <label class="cursor-pointer flex items-center justify-center p-1.5 rounded-xl bg-white/80 hover:bg-white backdrop-blur-md shadow-md border border-slate-200/60 transition">
+                <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="togglePhotoSelection(${index}, this.checked)" class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 cursor-pointer accent-teal-600">
+              </label>
+            </div>
+
+            <!-- Match Confidence Pill -->
+            ${confidence ? `
+              <div class="absolute top-3 left-3 z-10 pointer-events-none">
+                <span class="bg-teal-900/80 backdrop-blur-md text-teal-200 text-[11px] font-bold px-3 py-1 rounded-full border border-teal-500/30 shadow-sm">
+                  ${confidence}
+                </span>
+              </div>
+            ` : ''}
+
+            <!-- Bottom Hover Action Bar -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex items-end justify-between gap-2">
+              <button onclick="event.stopPropagation(); openMatchedPreview(${index});" class="flex-1 py-2 rounded-xl bg-white/95 hover:bg-white text-slate-900 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Preview
+              </button>
+
+              <a href="${photoUrl}" download="${filename}" onclick="event.stopPropagation()" class="p-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white transition flex items-center justify-center shadow" title="Download">
+                <i data-lucide="download" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+      updateSelectionUI();
+    }
+
+    // --- SELECTION STATE LOGIC ---
+
+    function togglePhotoSelection(index, isChecked) {
+      if (isChecked) {
+        selectedIndices.add(index);
+      } else {
+        selectedIndices.delete(index);
+      }
+
+      const card = document.getElementById(`matched-card-${index}`);
+      if (card) {
+        if (isChecked) {
+          card.classList.add('border-teal-500', 'ring-4', 'ring-teal-500/20');
+          card.classList.remove('border-white');
+        } else {
+          card.classList.remove('border-teal-500', 'ring-4', 'ring-teal-500/20');
+          card.classList.add('border-white');
+        }
+      }
+
+      updateSelectionUI();
+    }
+
+    function toggleSelectAll() {
+      if (selectedIndices.size === matchedPhotos.length) {
+        selectedIndices.clear();
+      } else {
+        selectedIndices = new Set(matchedPhotos.map((_, i) => i));
+      }
+      renderMatchedPhotos(matchedPhotos);
+    }
+
+    function clearAllSelections() {
+      selectedIndices.clear();
+      renderMatchedPhotos(matchedPhotos);
+    }
+
+    function updateSelectionUI() {
+      const count = selectedIndices.size;
+      selectedCounterText.innerText = `${count} Selected`;
+
+      if (count > 0) {
+        selectionDock.classList.remove('hidden');
+      } else {
+        selectionDock.classList.add('hidden');
+      }
+
+      if (count === matchedPhotos.length && matchedPhotos.length > 0) {
+        selectAllText.innerText = "Deselect All";
+      } else {
+        selectAllText.innerText = "Select All";
+      }
+    }
+
+    // --- DOWNLOAD SELECTED PHOTOS AS ZIP ---
+
+    async function downloadSelectedAsZip() {
+      const targetIndices = selectedIndices.size > 0 ? Array.from(selectedIndices) : matchedPhotos.map((_, i) => i);
+      if (isDownloading || targetIndices.length === 0) return;
+      isDownloading = true;
+
+      const zip = new JSZip();
+      downloadProgressBar.classList.remove('hidden');
+      progressBarFill.style.width = '0%';
+      progressPercentage.innerText = '0%';
+
+      const total = targetIndices.length;
+      let completed = 0;
+
+      for (let i = 0; i < total; i++) {
+        const photo = matchedPhotos[targetIndices[i]];
+        const photoUrl = photo.url || `/uploads/${photo.filename}`;
+        const filename = photo.filename || `selected-photo-${i + 1}.jpg`;
+
+        try {
+          const response = await fetch(photoUrl);
+          if (!response.ok) throw new Error('Failed to fetch photo');
+          const blob = await response.blob();
+          zip.file(filename, blob);
+        } catch (err) {
+          console.warn(`Could not add ${filename}:`, err.message);
+        }
+
+        completed++;
+        const pct = Math.round((completed / total) * 70);
+        progressBarFill.style.width = `${pct}%`;
+        progressPercentage.innerText = `${pct}%`;
+        progressStatusLabel.innerHTML = `Packaging photo ${completed} of ${total}...`;
+      }
+
+      progressStatusLabel.innerText = "Compressing ZIP file...";
+
+      try {
+        const content = await zip.generateAsync({ type: "blob" }, (metadata) => {
+          const pct = Math.round(70 + (metadata.percent * 0.3));
+          progressBarFill.style.width = `${pct}%`;
+          progressPercentage.innerText = `${pct}%`;
+        });
+
+        const safeTitle = (eventName || 'matched-photos').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        saveAs(content, `${safeTitle}-selected-photos.zip`);
+
+        progressStatusLabel.innerText = "ZIP Download ready!";
+        setTimeout(() => {
+          downloadProgressBar.classList.add('hidden');
+          isDownloading = false;
+        }, 1500);
+
+      } catch (zipErr) {
+        console.error('ZIP generation error:', zipErr);
+        alert('Failed to generate ZIP archive.');
+        downloadProgressBar.classList.add('hidden');
+        isDownloading = false;
+      }
+    }
+
+    // --- DOWNLOAD SELECTED PHOTOS INDIVIDUALLY ---
+
+    async function downloadSelectedIndividualFiles() {
+      const targetIndices = selectedIndices.size > 0 ? Array.from(selectedIndices) : matchedPhotos.map((_, i) => i);
+      if (isDownloading || targetIndices.length === 0) return;
+      isDownloading = true;
+
+      downloadProgressBar.classList.remove('hidden');
+      const total = targetIndices.length;
+
+      for (let i = 0; i < total; i++) {
+        const photo = matchedPhotos[targetIndices[i]];
+        const photoUrl = photo.url || `/uploads/${photo.filename}`;
+        const filename = photo.filename || `matched-photo-${i + 1}.jpg`;
+
+        const pct = Math.round(((i + 1) / total) * 100);
+        progressBarFill.style.width = `${pct}%`;
+        progressPercentage.innerText = `${pct}%`;
+        progressStatusLabel.innerHTML = `Downloading ${i + 1} of ${total} (${filename})...`;
+
+        const link = document.createElement('a');
+        link.href = photoUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        await new Promise(r => setTimeout(r, 350));
+      }
+
+      progressStatusLabel.innerText = "Selected files downloaded!";
+      setTimeout(() => {
+        downloadProgressBar.classList.add('hidden');
+        isDownloading = false;
+      }, 1500);
+    }
+
+    // --- LIGHTBOX PREVIEW MODAL LOGIC ---
+
+    function openMatchedPreview(index) {
+      if (!matchedPhotos || index < 0 || index >= matchedPhotos.length) return;
+      currentPreviewIndex = index;
+      const photo = matchedPhotos[index];
+
+      const photoUrl = photo.url || `/uploads/${photo.filename}`;
+      const filename = photo.filename || `matched-${index + 1}.jpg`;
+
+      previewImg.src = photoUrl;
+      previewCounter.innerText = `${index + 1} / ${matchedPhotos.length}`;
+      previewDownloadBtn.href = photoUrl;
+      previewDownloadBtn.download = filename;
+
+      if (photo.confidence) {
+        previewConfidence.innerText = `${photo.confidence}% Confidence Match`;
+        previewConfidence.classList.remove('hidden');
+      } else {
+        previewConfidence.classList.add('hidden');
+      }
+
+      previewModal.classList.remove('hidden');
+      setTimeout(() => previewModal.classList.remove('opacity-0'), 10);
+      document.body.style.overflow = 'hidden';
+      lucide.createIcons();
+    }
+
+    function closeMatchedPreview() {
+      previewModal.classList.add('opacity-0');
+      setTimeout(() => {
+        previewModal.classList.add('hidden');
+        previewImg.src = '';
+        document.body.style.overflow = 'auto';
+      }, 250);
+    }
+
+    function handleBackdropClick(event) {
+      if (event.target.id === 'matched-preview-modal') {
+        closeMatchedPreview();
+      }
+    }
+
+    function prevMatchedImage(event) {
+      if (event) event.stopPropagation();
+      if (matchedPhotos.length === 0) return;
+      currentPreviewIndex = (currentPreviewIndex > 0) ? currentPreviewIndex - 1 : matchedPhotos.length - 1;
+      openMatchedPreview(currentPreviewIndex);
+    }
+
+    function nextMatchedImage(event) {
+      if (event) event.stopPropagation();
+      if (matchedPhotos.length === 0) return;
+      currentPreviewIndex = (currentPreviewIndex < matchedPhotos.length - 1) ? currentPreviewIndex + 1 : 0;
+      openMatchedPreview(currentPreviewIndex);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (previewModal && !previewModal.classList.contains('hidden')) {
+        if (e.key === 'Escape') closeMatchedPreview();
+        if (e.key === 'ArrowLeft') prevMatchedImage();
+        if (e.key === 'ArrowRight') nextMatchedImage();
+      }
+    });
+  </script>
+</body>
+</html>

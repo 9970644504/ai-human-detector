@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Person Photo Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ============================================================ -->
+<!-- APP STARTUP SPLASH SCREEN (PURE CSS/SVG GRAPHIC - NO EXTERNAL IMAGES) -->
+<!-- ============================================================ -->
+<div id="appSplashScreen">
+  <div class="splash-container">
+    
+    <!-- Animated AI Camera Mesh SVG -->
+    <div class="splash-icon-wrapper">
+      <svg class="splash-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="42" stroke="url(#blue-grad)" stroke-width="2" stroke-dasharray="6 4" class="spin-ring" />
+        <circle cx="50" cy="50" r="30" stroke="#3b82f6" stroke-width="1.5" opacity="0.4" />
+        <!-- Scanner Beam -->
+        <line x1="20" y1="50" x2="80" y2="50" stroke="#60a5fa" stroke-width="2" class="scan-beam" />
+        <!-- Camera Icon -->
+        <path d="M35 42H41L43 38H57L59 42H65C66.6569 42 68 43.3431 68 45V62C68 63.6569 66.6569 65 65 65H35C33.3431 65 32 63.6569 32 62V45C32 43.3431 33.3431 42 35 42Z" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="50" cy="53.5" r="6.5" stroke="#3b82f6" stroke-width="2.5" />
+        <defs>
+          <linearGradient id="blue-grad" x1="0" y1="0" x2="100" y2="100">
+            <stop offset="0%" stop-color="#3b82f6" />
+            <stop offset="100%" stop-color="#818cf8" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Title & Status -->
+    <h1 class="splash-title">AI Person Photo Finder</h1>
+    <p class="splash-subtitle">Initializing recognition models...</p>
+
+    <!-- Sleek Progress Bar -->
+    <div class="splash-pulse-bar">
+      <div class="splash-pulse-fill"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Keeps splash screen visible for 3.5 seconds before fading out
+  setTimeout(() => {
+    const splash = document.getElementById('appSplashScreen');
+    if (splash) {
+      splash.classList.add('fade-out');
+      
+      // Completely hide after fade-out transition finishes
+      setTimeout(() => {
+        splash.style.display = 'none';
+      }, 600);
+    }
+  }, 3500); // Change this number to 3000 for 3s or 4000 for 4s
+</script>
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">AI</div>
+                <div class="logo-text">
+                    <div class="logo-title">AI Person Photo Finder</div>
+                    <div class="logo-subtitle">Find a person across your photo collection</div>
+                </div>
+            </div>
+
+            <div class="header-status">
+                <span id="statusDot" class="status-dot"></span>
+                <span id="headerStatus">System Ready</span>
+            </div>
+        </header>
+
+        <main class="page-area">
+
+        <!-- =================================================
+             PAGE 1
+             ================================================= -->
+
+        <section
+            id="selectionPage"
+            class="app-page selection-page"
+        >
+
+            <div class="page-heading">
+
+                <h1>
+                    Find a Person
+                </h1>
+
+                <p>
+                    Select or capture a reference photo and search
+                    your photo collection for the same person.
+                </p>
+
+            </div>
+
+
+            <div class="selection-grid">
+
+
+                <!-- =================================================
+                     REFERENCE PHOTO
+                     ================================================= -->
+
+                <div class="selection-card">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <h2>
+                        Reference Photo
+                    </h2>
+
+                    <p class="card-description">
+                        Choose one photo or take a selfie containing the
+                        person you want to find.
+                    </p>
+
+
+                    <div
+                        id="referenceUpload"
+                        class="upload-box"
+                    >
+
+                        <div
+                            id="referencePreview"
+                            class="upload-preview"
+                        >
+
+                            <div class="upload-icon">
+                                📷
+                            </div>
+
+                            <div class="upload-title">
+                                Select Reference Photo
+                            </div>
+
+                            <div class="upload-description">
+                                Upload image or capture via Camera
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Button Options: File vs Camera -->
+                    <div class="source-buttons">
+
+                        <button
+                            id="referenceButton"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            📁 Choose File
+                        </button>
+
+                        <button
+                            id="cameraButton"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            📷 Take Photo
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="referenceFileName"
+                        class="selected-file"
+                    >
+                        No reference photo selected
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PHOTO COLLECTION
+                     ================================================= -->
+
+                <div class="selection-card">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <h2>
+                        Photo Collection
+                    </h2>
+
+                    <p class="card-description">
+                        Choose a folder or ZIP file containing
+                        the photos you want to search.
+                    </p>
+
+
+                    <div
+                        id="folderUpload"
+                        class="upload-box"
+                    >
+
+                        <div
+                            id="folderPreview"
+                            class="upload-preview"
+                        >
+
+                            <div class="upload-icon">
+                                📁
+                            </div>
+
+                            <div class="upload-title">
+                                Select Photo Collection
+                            </div>
+
+                            <div class="upload-description">
+                                Folder or ZIP file
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="source-buttons">
+
+                        <button
+                            id="folderButton"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            Select Folder
+                        </button>
+
+                        <button
+                            id="zipButton"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            Select ZIP
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="folderName"
+                        class="selected-file"
+                    >
+                        No folder or ZIP selected
+                    </div>
+
+
+                    <div class="folder-info">
+
+                        <span>
+                            Photos found
+                        </span>
+
+                        <strong id="photoCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEARCH
+                 ================================================= -->
+
+            <div class="selection-action">
+
+                <div
+                    id="searchStatus"
+                    class="search-status"
+                >
+                    Select a reference photo and a photo
+                    collection to begin.
+                </div>
+
+
+                <button
+                    id="findButton"
+                    class="primary-button"
+                    type="button"
+                    disabled
+                >
+                    🔎 Start Search
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PAGE 2
+             ================================================= -->
+
+        <section
+            id="resultsPage"
+            class="app-page results-page hidden"
+        >
+
+
+            <button
+                id="backButton"
+                class="back-button"
+                type="button"
+            >
+                ← Back to Selection
+            </button>
+
+
+            <div class="results-heading">
+
+                <div>
+
+                    <h1>
+                        Matching Photos
+                    </h1>
+
+                    <p>
+                        Photos containing the selected person
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="resultStatus"
+                    class="detection-status status-ready"
+                >
+                    Ready
+                </div>
+
+            </div>
+
+
+            <div class="result-count-box">
+
+                <strong id="matchingCountTop">
+                    0
+                </strong>
+
+                <span>
+                    matches
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROGRESS
+                 ================================================= -->
+
+            <div class="progress-section">
+
+                <div class="progress-header">
+
+                    <span>
+                        Processing photos
+                    </span>
+
+                    <span id="progressPercentage">
+                        0%
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        id="progressFill"
+                        class="progress-fill"
+                    ></div>
+
+                </div>
+
+
+                <div
+                    id="progressDetails"
+                    class="progress-details"
+                >
+                    Waiting...
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MATCHES
+                 ================================================= -->
+
+            <section class="matches-section">
+
+                <div class="section-title-row">
+
+                    <h2>
+                        Person Matches
+                    </h2>
+
+                    <p>
+                        Matching photos are shown below.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="resultsContainer"
+                    class="results-container"
+                >
+
+                    <div
+                        id="resultsEmpty"
+                        class="empty-results"
+                    >
+
+                        <div class="empty-results-icon">
+                            🔎
+                        </div>
+
+                        <h3>
+                            No results yet
+                        </h3>
+
+                        <p>
+                            Start a search to find matching photos.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SUMMARY
+                 ================================================= -->
+
+            <section class="summary-section">
+
+                <h2>
+                    Search Summary
+                </h2>
+
+
+                <div class="summary-grid">
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Photos Scanned
+                        </span>
+
+                        <strong id="scannedCount">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Matching Photos
+                        </span>
+
+                        <strong id="matchingCount">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Uncertain
+                        </span>
+
+                        <strong id="uncertainCount">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Search Status
+                        </span>
+
+                        <strong id="resultText">
+                            Ready
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 UNCERTAIN
+                 ================================================= -->
+
+            <section
+                id="uncertainSection"
+                class="uncertain-section hidden"
+            >
+
+                <div class="uncertain-header">
+
+                    <h2>
+                        Uncertain Matches
+                    </h2>
+
+                    <span id="uncertainBadge">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="uncertainList"
+                    class="uncertain-list"
+                ></div>
+
+            </section>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     CAMERA CAPTURE MODAL OVERLAY
+     ===================================================== -->
+<div id="cameraModal" class="hidden">
+  <div class="camera-card">
+    
+    <div class="camera-header">
+      <h3>Take Reference Photo</h3>
+      <button id="closeCameraModal" class="btn-close">&times;</button>
+    </div>
+
+    <!-- Wrapped Video Viewport -->
+    <div class="video-container">
+      <video id="webcamVideo" autoplay playsinline></video>
+      <canvas id="cameraCanvas" style="display: none;"></canvas>
+    </div>
+
+    <!-- Pinned Action Buttons -->
+    <div class="camera-actions">
+      <button id="cancelCameraButton" class="btn btn-secondary">Cancel</button>
+      <button id="captureButton" class="btn btn-primary">📸 Take Photo</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="renderer.js"></script>
+<script src="renderer.js"></script>
+<script src="cameraModule.js"></script>
+
+
+</body>
+
+</html>

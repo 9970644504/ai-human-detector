@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WORKSPACE.AI — Event Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    body {
+      background-color: #000000;
+      font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    .font-cinematic {
+      font-family: 'Syncopate', sans-serif;
+      letter-spacing: 0.22em;
+      font-weight: 400;
+    }
+
+    @media (max-width: 640px) {
+      .font-cinematic {
+        letter-spacing: 0.16em;
+      }
+    }
+
+    #galaxyCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .lunar-eclipse-horizon {
+      position: fixed;
+      top: -380px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130vw;
+      height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(12, 16, 26, 0.85) 0%, rgba(3, 5, 10, 0.95) 75%, rgba(0, 0, 0, 1) 100%);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 15px 80px rgba(255, 255, 255, 0.25), 0 35px 140px rgba(66, 133, 244, 0.25);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    @media (max-width: 640px) {
+      .lunar-eclipse-horizon {
+        top: -420px;
+        width: 190vw;
+      }
+    }
+
+    .lunar-nav {
+      background: rgba(4, 6, 12, 0.65);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .lunar-panel-hero {
+      background: rgba(10, 14, 22, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .lunar-modal {
+      background: rgba(8, 12, 20, 0.96);
+      backdrop-filter: blur(36px);
+      -webkit-backdrop-filter: blur(36px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95);
+    }
+
+    .btn-lunar-action {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px);
+      transition: all 0.2s ease;
+    }
+    .btn-lunar-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-lunar-primary {
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid #ffffff;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-lunar-primary:hover {
+      background: #e2e8f0;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.45);
+    }
+
+    .google-border-top {
+      background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
+      height: 3px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-[100dvh] relative overflow-x-hidden">
+
+  <canvas id="galaxyCanvas"></canvas>
+  <div class="lunar-eclipse-horizon"></div>
+  <div class="fixed top-0 left-0 right-0 z-50 google-border-top"></div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 lunar-nav mt-[3px]">
+    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2.5">
+      
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <a href="events.html" class="inline-flex items-center gap-1.5 btn-lunar-action px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-semibold shrink-0">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span class="hidden xs:inline">EVENTS</span>
+        </a>
+
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          <h1 id="eventPageTitle" class="font-cinematic text-xs sm:text-sm font-light text-white uppercase truncate">
+            Loading...
+          </h1>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <span id="photoCounterBadge" class="hidden sm:inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-blue-300 text-xs font-bold">
+          0 Photos
+        </span>
+        <button id="copyGuestBtn" onclick="copyGuestLink()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full btn-lunar-action text-xs font-semibold flex items-center gap-1.5">
+          <i data-lucide="share-2" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span class="hidden sm:inline">Guest Portal</span>
+        </button>
+        <button onclick="openUploadModal()" class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full btn-lunar-primary text-xs font-bold uppercase flex items-center gap-1.5">
+          <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-black"></i>
+          <span>Upload</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Content Container -->
+  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 pt-16 sm:pt-28 pb-16 space-y-6 sm:space-y-8">
+    <div id="foldersContainer" class="space-y-6 sm:space-y-8">
+      <div class="lunar-panel-hero rounded-2xl sm:rounded-3xl p-6 sm:p-8 animate-pulse flex flex-col gap-4">
+        <div class="h-5 w-1/3 bg-white/10 rounded-lg"></div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div class="aspect-square bg-white/5 rounded-xl"></div>
+          <div class="aspect-square bg-white/5 rounded-xl"></div>
+          <div class="aspect-square bg-white/5 rounded-xl"></div>
+          <div class="aspect-square bg-white/5 rounded-xl"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Upload Modal -->
+  <div id="zipUploadModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="lunar-modal max-w-sm sm:max-w-md w-full rounded-[24px] p-5 sm:p-6 space-y-4 relative">
+      <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
+        <h3 class="font-cinematic text-xs font-light text-white uppercase flex items-center gap-2">
+          <i data-lucide="archive" class="w-4 h-4 text-blue-400"></i> Upload ZIP
+        </h3>
+        <button onclick="closeUploadModal()" class="p-1 text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-xs text-slate-300 font-medium leading-relaxed">Select a <b>.zip</b> archive containing event photos to extract and auto-index guest faces.</p>
+      
+      <label class="flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-2xl p-5 cursor-pointer bg-white/5 text-center">
+        <i data-lucide="folder-archive" class="w-7 h-7 text-blue-400 mb-1.5"></i>
+        <span id="zipFileName" class="text-xs font-bold text-white">Choose or tap .zip</span>
+        <input type="file" id="zipFileInput" accept=".zip,application/zip" class="hidden" />
+      </label>
+
+      <button id="startZipUploadBtn" type="button" class="w-full py-2.5 rounded-full btn-lunar-primary text-xs font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer" disabled>
+        Process Faces
+      </button>
+    </div>
+  </div>
+
+  <!-- Fullscreen Lightbox Modal -->
+  <div id="imageLightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4">
+    <div class="absolute top-4 right-4 flex items-center gap-2 z-20" onclick="event.stopPropagation()">
+      <button id="lightboxDeleteBtn" type="button" class="px-3.5 py-2 rounded-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        <span>Delete Photo</span>
+      </button>
+      <button onclick="closeLightbox()" class="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <img id="lightboxImage" src="" alt="Preview" class="max-h-[85vh] max-w-[92vw] object-contain rounded-xl border border-white/20" onclick="event.stopPropagation()">
+  </div>
+
+  <!-- Three.js Background -->
+  <script>
+    const galaxyCanvas = document.getElementById('galaxyCanvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 30, 48);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: galaxyCanvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const isMobile = window.innerWidth < 640;
+    const parameters = { count: isMobile ? 18000 : 36000, size: isMobile ? 0.022 : 0.019, radius: 48, branches: 2, spin: 1.25, randomness: 0.62, power: 3.8 };
+
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(parameters.count * 3);
+    const colors = new Float32Array(parameters.count * 3);
+    const cInside = new THREE.Color('#ffffff');
+    const cOutside = new THREE.Color('#7aa2f7');
+
+    for (let i = 0; i < parameters.count; i++) {
+      const i3 = i * 3;
+      const r = Math.random() * parameters.radius;
+      const spin = r * parameters.spin;
+      const branch = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+      positions[i3] = Math.cos(branch + spin) * r + Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * r;
+      positions[i3 + 1] = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * (r * 0.45);
+      positions[i3 + 2] = Math.sin(branch + spin) * r + Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * r;
+      const mixed = cInside.clone().lerp(cOutside, r / parameters.radius);
+      colors[i3] = mixed.r; colors[i3 + 1] = mixed.g; colors[i3 + 2] = mixed.b;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const points = new THREE.Points(geometry, new THREE.PointsMaterial({ size: parameters.size, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true, transparent: true, opacity: 0.9 }));
+    points.rotation.x = 0.55;
+    scene.add(points);
+
+    let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+    window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth - 0.5) * 2; mouseY = (e.clientY / window.innerHeight - 0.5) * 2; });
+    window.addEventListener('touchmove', (e) => { if (e.touches.length) { mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2; mouseY = (e.touches[0].clientY / window.innerHeight - 0.5) * 2; } }, { passive: true });
+    window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+
+    const clock = new THREE.Clock();
+    function animate() {
+      points.rotation.y = clock.getElapsedTime() * 0.038;
+      targetX += (mouseX * 0.2 - targetX) * 0.05;
+      targetY += (mouseY * 0.15 - targetY) * 0.05;
+      points.rotation.z = targetX;
+      points.rotation.x = 0.55 + targetY;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* ================= LOGIC ================= */
+    let currentEventIdentifier = null;
+    let eventSlug = null;
+    let currentPhotoList = [];
+    const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+
+    if (!token) window.location.replace('/index.html');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentEventIdentifier = urlParams.get('id') || urlParams.get('slug');
+      if (!currentEventIdentifier) return window.location.replace('/events.html');
+      loadEventDetails();
+      setupUpload();
+    });
+
+    // Cleanly builds the primary path and fallback streaming URL
+    function getPhotoUrls(item) {
+      if (!item) return { primary: '', fallback: '' };
+      const photoId = String(item.id || item._id || item.photo_id || '');
+      const fallbackUrl = `/api/photos/${encodeURIComponent(photoId)}/file`;
+
+      let raw = item.file_path || item.url || item.filePath || (typeof item === 'string' ? item : '');
+      
+      // Clean up Windows backslashes and absolute disk roots
+      if (raw) {
+        raw = raw.replace(/\\/g, '/');
+        const uploadIdx = raw.indexOf('/uploads/');
+        if (uploadIdx !== -1) {
+          raw = raw.substring(uploadIdx);
+        } else if (raw.indexOf('uploads/') !== -1) {
+          raw = '/' + raw.substring(raw.indexOf('uploads/'));
+        }
+      }
+
+      if (!raw && item.filename) {
+        raw = `/uploads/galleries/${item.user_id || 'default'}/${item.event_id || currentEventIdentifier}/${item.filename}`;
+      }
+
+      let primary = raw;
+      if (primary && !primary.startsWith('http://') && !primary.startsWith('https://') && !primary.startsWith('/')) {
+        primary = '/' + primary;
+      }
+
+      return {
+        primary: primary || fallbackUrl,
+        fallback: fallbackUrl
+      };
+    }
+
+    async function loadEventDetails() {
+      try {
+        const res = await fetch(`/api/galleries/${currentEventIdentifier}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const ev = data.event || data.gallery || data;
+        currentPhotoList = data.photos || ev.photos || [];
+        eventSlug = ev.slug || currentEventIdentifier;
+
+        document.getElementById('eventPageTitle').innerText = ev.name || ev.event_name || 'Event';
+        document.getElementById('photoCounterBadge').innerText = `${currentPhotoList.length} Photos`;
+        renderPhotos(currentPhotoList);
+      } catch (e) {
+        document.getElementById('foldersContainer').innerHTML = `<div class="lunar-panel-hero rounded-2xl text-center py-10 text-red-400 text-xs">Failed to load event.</div>`;
+      }
+    }
+
+    function renderPhotos(photos) {
+      const c = document.getElementById('foldersContainer');
+      c.innerHTML = '';
+      if (!photos || !photos.length) {
+        c.innerHTML = `
+          <div class="lunar-panel-hero rounded-2xl text-center py-10 text-slate-400 text-xs space-y-3">
+            <p>No photos uploaded yet.</p>
+            <button onclick="openUploadModal()" class="px-4 py-2 btn-lunar-primary text-xs font-bold rounded-full uppercase cursor-pointer">Upload ZIP</button>
+          </div>
+        `;
+        return;
+      }
+
+      const grouped = {};
+      photos.forEach(p => {
+        const f = p.folder_name || 'All Photos';
+        if (!grouped[f]) grouped[f] = [];
+        grouped[f].push(p);
+      });
+
+      Object.keys(grouped).forEach(f => {
+        const list = grouped[f];
+        const sec = document.createElement('section');
+        sec.className = 'lunar-panel-hero rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-3 sm:space-y-4';
+        sec.innerHTML = `
+          <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+            <div class="flex items-center gap-2.5">
+              <i data-lucide="folder" class="w-4 h-4 text-blue-400"></i>
+              <h2 class="font-cinematic text-xs sm:text-sm font-light text-white uppercase">${escapeHtml(f)}</h2>
+            </div>
+            <span class="text-[10px] text-slate-400 font-medium">${list.length} photos</span>
+          </div>
+          <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 sm:gap-3.5 pt-1">
+            ${list.map(i => {
+              const { primary, fallback } = getPhotoUrls(i);
+              const photoId = String(i.id || i._id || i.photo_id || '');
+              return `
+                <div id="photo-card-${photoId}" onclick="openLightbox('${primary}', '${photoId}')" class="group aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10 relative cursor-pointer active:scale-95 transition">
+                  <img 
+                    src="${primary}" 
+                    alt="Photo" 
+                    class="w-full h-full object-cover" 
+                    loading="lazy" 
+                    onerror="if(this.src!=='${window.location.origin}${fallback}'){this.src='${fallback}';}else{this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'%3E%3Crect fill=\\'%23111\\' width=\\'100\\' height=\\'100\\'/%3E%3Ctext fill=\\'%23666\\' x=\\'50%\\' y=\\'50%\\' text-anchor=\\'middle\\' dy=\\'.3em\\'%3ENo Preview%3C/text%3E%3C/svg%3E';}"
+                  >
+                  
+                  <button 
+                    type="button" 
+                    onclick="event.stopPropagation(); deletePhoto('${photoId}')" 
+                    title="Delete Photo"
+                    class="absolute top-2 right-2 p-1.5 rounded-full bg-black/70 hover:bg-red-500 text-white/90 hover:text-white border border-white/20 transition opacity-90 sm:opacity-0 sm:group-hover:opacity-100 z-10 cursor-pointer"
+                  >
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+        c.appendChild(sec);
+      });
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    async function deletePhoto(photoId) {
+      if (!photoId) return alert('Photo ID is missing.');
+      if (!confirm('Are you sure you want to delete this photo?')) return;
+
+      try {
+        let res = await fetch(`/api/photos/${encodeURIComponent(photoId)}`, {
+          method: 'DELETE',
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (res.status === 404 && currentEventIdentifier) {
+          res = await fetch(`/api/galleries/${encodeURIComponent(currentEventIdentifier)}/photos/${encodeURIComponent(photoId)}`, {
+            method: 'DELETE',
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+        }
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success !== false) {
+          closeLightbox();
+          const cardEl = document.getElementById(`photo-card-${photoId}`);
+          if (cardEl) cardEl.remove();
+          await loadEventDetails();
+        } else {
+          alert(data.message || `Error (${res.status}): Failed to delete photo.`);
+        }
+      } catch (err) {
+        console.error('Delete photo error:', err);
+        alert('Server unreachable or network error.');
+      }
+    }
+
+    function setupUpload() {
+      const input = document.getElementById('zipFileInput');
+      const btn = document.getElementById('startZipUploadBtn');
+      input.addEventListener('change', (e) => {
+        if (e.target.files[0]) {
+          document.getElementById('zipFileName').innerText = e.target.files[0].name;
+          btn.disabled = false;
+        }
+      });
+      btn.addEventListener('click', async () => {
+        if (!input.files[0]) return;
+        btn.innerText = 'Processing...'; btn.disabled = true;
+        const form = new FormData();
+        form.append('zipFile', input.files[0]);
+        try {
+          await fetch(`/api/galleries/${currentEventIdentifier}/upload-zip`, {
+            method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: form
+          });
+          closeUploadModal();
+          loadEventDetails();
+        } catch (e) {
+          alert('Upload failed');
+        } finally {
+          btn.innerText = 'Process Faces'; btn.disabled = false;
+        }
+      });
+    }
+
+    function openUploadModal() { document.getElementById('zipUploadModal').classList.remove('hidden'); }
+    function closeUploadModal() { document.getElementById('zipUploadModal').classList.add('hidden'); }
+
+    function openLightbox(url, photoId) { 
+      document.getElementById('lightboxImage').src = url; 
+      const deleteBtn = document.getElementById('lightboxDeleteBtn');
+      if (photoId) {
+        deleteBtn.onclick = () => deletePhoto(photoId);
+        deleteBtn.classList.remove('hidden');
+      } else {
+        deleteBtn.classList.add('hidden');
+      }
+      document.getElementById('imageLightboxModal').classList.remove('hidden'); 
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function closeLightbox() { 
+      document.getElementById('imageLightboxModal').classList.add('hidden'); 
+    }
+
+    function copyGuestLink() {
+      navigator.clipboard.writeText(`${window.location.origin}/gallery.html?slug=${eventSlug}`).then(() => alert('Guest Link Copied!'));
+    }
+
+    function escapeHtml(t) {
+      const d = document.createElement('div'); d.innerText = t; return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

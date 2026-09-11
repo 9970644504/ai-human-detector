@@ -6,293 +6,85 @@
   <title>Work Space — Gallery</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-
-    body {
-      background-color: #f8fafd;
-      font-family: 'Google Sans', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      color: #1f1f1f;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    #googleMeshCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-      filter: blur(85px);
-      opacity: 0.45;
-    }
-
-    .google-nav {
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid #dadce0;
-      box-shadow: 0 2px 10px rgba(60, 64, 67, 0.06);
-    }
-
-    .google-bottom-dock {
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid #dadce0;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .google-border-top {
-      background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
-      height: 3px;
-      width: 100%;
-    }
-
-    .btn-google-highlight {
-      background: #1a73e8;
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.35);
-      transition: all 0.2s ease;
-    }
-    .btn-google-highlight:hover {
-      background: #1557b0;
-      box-shadow: 0 4px 14px rgba(26, 115, 232, 0.45);
-      transform: translateY(-1px);
-    }
-    .btn-google-highlight:active {
-      transform: scale(0.97);
-    }
-
-    .google-btn-ring {
-      padding: 2px;
-      border-radius: 9999px;
-      background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc05, #34a853, #4285f4);
-      background-size: 300% 300%;
-      animation: ringShift 4s ease infinite;
-      box-shadow: 0 4px 14px rgba(66, 133, 244, 0.25);
-    }
-    @keyframes ringShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .google-card {
-      background: #ffffff;
-      border: 1px solid #dadce0;
-      border-radius: 20px;
-      box-shadow: 0 1px 3px rgba(60, 64, 67, 0.08);
-      transition: box-shadow 0.2s ease;
-    }
-    .google-card:hover {
-      box-shadow: 0 4px 14px rgba(60, 64, 67, 0.12);
-    }
-
-    @keyframes googleBarSweep {
-      0% { transform: translateX(-100%); }
-      50% { transform: translateX(20%); }
-      100% { transform: translateX(100%); }
-    }
-    .google-4bar {
-      height: 4px;
-      width: 100%;
-      background: #f1f3f4;
-      overflow: hidden;
-      position: relative;
-      border-radius: 9999px;
-    }
-    .google-4bar::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 60%;
-      background: linear-gradient(90deg, #4285f4 0%, #ea4335 30%, #fbbc05 60%, #34a853 100%);
-      animation: googleBarSweep 1.6s infinite ease-in-out;
-      border-radius: 9999px;
-    }
-  </style>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="editorial.css">
+  <link rel="stylesheet" href="bg-scroll.css">
 </head>
-<body class="flex flex-col min-h-screen relative pb-24 sm:pb-10">
+<body class="editorial min-h-screen">
 
-  <div class="fixed top-0 left-0 right-0 z-50 google-border-top"></div>
-  <canvas id="googleMeshCanvas"></canvas>
+  <!-- SCROLLING PHOTO-WALL BACKGROUND -->
+  <div id="bgScrollRoot"></div>
 
-  <!-- ================= TOP APP BAR ================= -->
-  <header class="sticky top-0 z-40 google-nav mt-[3px]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
-      
-      <!-- Brand & Aperture Logo -->
-      <div class="flex items-center gap-3 sm:gap-3.5 min-w-0">
-        <div class="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-2xl p-[2px] bg-gradient-to-tr from-[#4285F4] via-[#EA4335] to-[#34A853] shadow-md shadow-blue-500/20 group cursor-pointer transition-transform hover:scale-105 active:scale-95">
-          <div class="w-full h-full rounded-[14px] bg-white flex items-center justify-center p-1.5 overflow-hidden">
-            <svg class="w-full h-full" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="16" stroke="#e8eaed" stroke-width="2.5" stroke-dasharray="2 2" />
-              <line x1="24" y1="11" x2="33" y2="17" stroke="#EA4335" stroke-width="3" stroke-linecap="round" />
-              <line x1="33" y1="17" x2="27" y2="21" stroke="#EA4335" stroke-width="3" stroke-linecap="round" />
-              <line x1="37" y1="24" x2="31" y2="33" stroke="#FBBC05" stroke-width="3" stroke-linecap="round" />
-              <line x1="31" y1="33" x2="27" y2="27" stroke="#FBBC05" stroke-width="3" stroke-linecap="round" />
-              <line x1="24" y1="37" x2="15" y2="31" stroke="#34A853" stroke-width="3" stroke-linecap="round" />
-              <line x1="15" y1="31" x2="21" y2="27" stroke="#34A853" stroke-width="3" stroke-linecap="round" />
-              <line x1="11" y1="24" x2="17" y2="15" stroke="#4285F4" stroke-width="3" stroke-linecap="round" />
-              <line x1="17" y1="15" x2="21" y2="21" stroke="#4285F4" stroke-width="3" stroke-linecap="round" />
-              <circle cx="24" cy="24" r="4.5" fill="#4285F4" />
-              <circle cx="24" cy="24" r="2" fill="#ffffff" opacity="0.65" />
-            </svg>
-          </div>
-        </div>
+  <!-- ================= TOP NAV ================= -->
+  <header class="nav-editorial">
+    <div class="nav-editorial-inner">
+      <div class="nav-logo"><div class="nav-logo-mark"><i data-lucide="aperture" class="w-3.5 h-3.5"></i></div><span class="nav-logo-text" id="navBrand">WORK SPACE</span></div>
 
-        <div class="min-w-0">
-          <div class="flex items-center gap-1.5">
-            <span class="text-sm sm:text-lg font-bold text-gray-900 tracking-tight leading-none truncate">
-              Work <span class="font-normal text-gray-700">Space</span>
-            </span>
-            <span class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 text-[#1a73e8] border border-blue-200">
-              AI
-            </span>
-          </div>
-          <p id="gallerySubtitle" class="text-[11px] sm:text-xs text-gray-500 font-medium truncate mt-0.5">
-            Connecting to photos...
-          </p>
-        </div>
-      </div>
+      <nav class="nav-links hidden sm:flex">
+        <button type="button" class="nav-link-btn active" onclick="resetGalleryView()">All Photos</button>
+        <button type="button" class="nav-link-btn" onclick="openFaceSearchModal()">Find My Face</button>
+        <button type="button" class="nav-link-btn" id="navDownloadAllBtn" onclick="downloadEventZip(false)">Download</button>
+      </nav>
 
-      <!-- Desktop Header Actions -->
-      <div class="hidden sm:flex items-center gap-3">
-        <button 
-          id="navDownloadAllBtn"
-          onclick="downloadEventZip(false)" 
-          class="hidden sm:inline-flex items-center gap-2 bg-[#e8f0fe] hover:bg-[#d2e3fc] text-[#1a73e8] border border-[#d2e3fc] text-xs font-bold px-4 py-2.5 rounded-full transition cursor-pointer shadow-xs active:scale-95"
-        >
-          <i data-lucide="download" class="w-4 h-4 text-[#1a73e8]"></i>
-          <span>Download All (.ZIP)</span>
+      <div class="nav-actions">
+        <button type="button" onclick="openFaceSearchModal()" class="btn-editorial px-4 py-2 hidden sm:inline-flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Find My Face</span>
         </button>
-
-        <div class="google-btn-ring">
-          <button 
-            onclick="openFaceSearchModal()" 
-            class="flex items-center gap-2 text-xs font-black uppercase tracking-wider px-5 py-2.5 rounded-full bg-white text-gray-900 hover:bg-gray-50 transition cursor-pointer shadow-xs active:scale-95"
-          >
-            <i data-lucide="sparkles" class="w-4 h-4 text-[#4285f4]"></i>
-            <span>Find My Face</span>
-          </button>
-        </div>
+        <button type="button" onclick="downloadEventZip(false)" id="mobileNavZipBtn" class="p-2 rounded-full border border-gray-200 sm:hidden">
+          <i data-lucide="download" class="w-4 h-4"></i>
+        </button>
       </div>
-
     </div>
   </header>
 
-  <!-- ================= MAIN GALLERY FEED ================= -->
-  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6">
+  <!-- ================= HERO HEADLINE ================= -->
+  <section class="editorial-hero">
+    <h1 class="headline-thin" id="galleryHeadline">EVENT PHOTOS</h1>
+    <span class="tag-bracket" id="gallerySubtitle">[ Connecting to photos... ]</span>
+  </section>
 
-    <!-- Active Search Filter Ribbon -->
-    <div id="filterRibbon" class="hidden google-card p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-blue-200 bg-white">
-      <div class="flex items-center gap-3.5">
-        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl p-[1.5px] bg-gradient-to-tr from-[#4285F4] via-[#EA4335] to-[#34A853] shadow-sm shrink-0">
-          <div class="w-full h-full rounded-[14px] bg-[#f0f6fe] flex items-center justify-center p-1.5">
-            <svg class="w-full h-full" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="16" stroke="#c2d7fc" stroke-width="2.5" stroke-dasharray="2 2" />
-              <line x1="24" y1="11" x2="33" y2="17" stroke="#EA4335" stroke-width="3" stroke-linecap="round" />
-              <line x1="33" y1="17" x2="27" y2="21" stroke="#EA4335" stroke-width="3" stroke-linecap="round" />
-              <line x1="37" y1="24" x2="31" y2="33" stroke="#FBBC05" stroke-width="3" stroke-linecap="round" />
-              <line x1="31" y1="33" x2="27" y2="27" stroke="#FBBC05" stroke-width="3" stroke-linecap="round" />
-              <line x1="24" y1="37" x2="15" y2="31" stroke="#34A853" stroke-width="3" stroke-linecap="round" />
-              <line x1="15" y1="31" x2="21" y2="27" stroke="#34A853" stroke-width="3" stroke-linecap="round" />
-              <line x1="11" y1="24" x2="17" y2="15" stroke="#4285F4" stroke-width="3" stroke-linecap="round" />
-              <line x1="17" y1="15" x2="21" y2="21" stroke="#4285F4" stroke-width="3" stroke-linecap="round" />
-              <circle cx="24" cy="24" r="4.5" fill="#4285F4" />
-              <circle cx="24" cy="24" r="2" fill="#ffffff" opacity="0.8" />
-            </svg>
-          </div>
-        </div>
-
-        <div>
-          <p class="text-xs sm:text-sm font-bold text-gray-900" id="filterText">Matched photos for your face</p>
-          <p class="text-[11px] sm:text-xs text-gray-500 font-medium" id="filterCount">0 photo(s) found</p>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-        <button 
-          onclick="downloadEventZip(true)" 
-          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 btn-google-highlight px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer"
-        >
-          <i data-lucide="archive" class="w-4 h-4"></i>
-          <span>Download All as .ZIP</span>
-        </button>
-
-        <button 
-          id="btnDownloadAllFiles"
-          onclick="downloadMatchedAsIndividualFiles()" 
-          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-[#e8f0fe] hover:bg-[#d2e3fc] text-[#1a73e8] border border-[#d2e3fc] px-5 py-2.5 rounded-full text-xs font-bold transition cursor-pointer"
-        >
-          <i data-lucide="download" class="w-4 h-4 text-[#1a73e8]"></i>
-          <span>Save Each Image</span>
-        </button>
-
-        <button 
-          onclick="resetGalleryView()" 
-          class="flex-1 sm:flex-none px-4 py-2.5 rounded-full border border-gray-300 bg-white hover:bg-gray-50 text-xs font-semibold text-gray-700 transition cursor-pointer"
-        >
-          View All Photos
-        </button>
-      </div>
+  <!-- Active Search Filter Ribbon -->
+  <div id="filterRibbon" class="hidden max-w-[1400px] mx-auto px-6 pb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <p class="text-sm font-bold text-gray-900" id="filterText">Matched photos for your face</p>
+      <p class="text-xs text-gray-500 font-medium" id="filterCount">0 photo(s) found</p>
     </div>
-
-    <!-- Photos Grid Container -->
-    <div id="photosContainer" class="space-y-6">
-      <div class="google-card p-6 sm:p-8 animate-pulse space-y-4">
-        <div class="h-6 w-48 bg-gray-200 rounded-md"></div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-          <div class="aspect-square bg-gray-100 rounded-2xl"></div>
-          <div class="aspect-square bg-gray-100 rounded-2xl"></div>
-          <div class="aspect-square bg-gray-100 rounded-2xl"></div>
-          <div class="aspect-square bg-gray-100 rounded-2xl"></div>
-          <div class="aspect-square bg-gray-100 rounded-2xl"></div>
-          <div class="aspect-square bg-gray-100 rounded-2xl"></div>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ================= MOBILE FIXED BOTTOM ACTION DOCK ================= -->
-  <div class="sm:hidden fixed bottom-0 left-0 right-0 z-40 google-bottom-dock px-4 py-3 flex items-center justify-between gap-3">
-    <button 
-      id="mobileNavZipBtn"
-      onclick="downloadEventZip(false)" 
-      class="flex-1 inline-flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold py-3 rounded-full transition active:scale-95 border border-gray-200"
-    >
-      <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
-      <span>Download ZIP</span>
-    </button>
-
-    <div class="flex-1 google-btn-ring">
-      <button 
-        onclick="openFaceSearchModal()" 
-        class="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider py-2.5 rounded-full bg-white text-gray-900 active:scale-95 transition shadow-xs"
-      >
-        <i data-lucide="sparkles" class="w-4 h-4 text-[#4285f4]"></i>
-        <span>Find My Face</span>
+    <div class="flex flex-wrap items-center gap-2.5">
+      <button onclick="downloadEventZip(true)" class="btn-editorial px-5 py-2.5 inline-flex items-center gap-2">
+        <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+        <span>Download Matches</span>
+      </button>
+      <button id="btnDownloadAllFiles" onclick="downloadMatchedAsIndividualFiles()" class="btn-editorial-outline px-5 py-2.5 inline-flex items-center gap-2">
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <span>Save Each Image</span>
+      </button>
+      <button onclick="resetGalleryView()" class="px-4 py-2.5 rounded-full border border-gray-300 bg-white hover:bg-gray-50 text-xs font-semibold text-gray-700 transition">
+        View All Photos
       </button>
     </div>
   </div>
 
+  <!-- ================= PHOTO GRID ================= -->
+  <main id="photosContainer">
+    <div class="photo-grid-editorial">
+      <div class="photo-tile animate-pulse"></div>
+      <div class="photo-tile animate-pulse"></div>
+      <div class="photo-tile animate-pulse"></div>
+      <div class="photo-tile animate-pulse"></div>
+      <div class="photo-tile animate-pulse"></div>
+    </div>
+  </main>
+
   <!-- ================= MODAL / BOTTOM SHEET: FACE SEARCH ================= -->
   <div id="faceSearchModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full sm:max-w-lg rounded-t-[28px] sm:rounded-[28px] p-5 sm:p-8 relative space-y-4 sm:space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-      
+    <div class="bg-white w-full sm:max-w-lg rounded-t-[28px] sm:rounded-[10px] p-5 sm:p-8 relative space-y-4 sm:space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto border border-gray-100">
+
       <!-- Modal Header -->
       <div class="flex items-start justify-between pb-3 border-b border-gray-100">
         <div class="space-y-1">
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#1a73e8] border border-blue-100">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Work Space AI Vision
-          </div>
-          <h3 class="text-base sm:text-xl font-bold text-gray-900 tracking-tight">Find Yourself in Archive</h3>
+          <div class="editorial-label">Face Vision</div>
+          <h3 class="editorial-title text-lg">Find Yourself in Archive</h3>
         </div>
         <button onclick="closeFaceSearchModal()" class="text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -302,7 +94,7 @@
       <!-- Segmented Mode Tabs -->
       <div class="flex rounded-full bg-gray-100 p-1">
         <button id="tabUploadBtn" onclick="switchMode('upload')" class="flex-1 py-2 text-xs font-bold rounded-full bg-white shadow-xs text-gray-900 transition flex items-center justify-center gap-2 cursor-pointer">
-          <i data-lucide="upload" class="w-3.5 h-3.5 text-[#4285f4]"></i>
+          <i data-lucide="upload" class="w-3.5 h-3.5"></i>
           <span>Upload File</span>
         </button>
         <button id="tabCameraBtn" onclick="switchMode('camera')" class="flex-1 py-2 text-xs font-bold rounded-full text-gray-500 hover:text-gray-900 transition flex items-center justify-center gap-2 cursor-pointer">
@@ -313,8 +105,8 @@
 
       <!-- View 1: Upload File -->
       <div id="uploadAreaView" class="space-y-3">
-        <label for="selfieInput" class="group relative flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-[#4285f4] rounded-2xl p-6 sm:p-8 cursor-pointer bg-gray-50/60 hover:bg-blue-50/30 transition text-center space-y-2">
-          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#4285f4] flex items-center justify-center shadow-xs overflow-hidden border border-gray-200 group-hover:scale-105 transition-transform">
+        <label for="selfieInput" class="group relative flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-gray-900 rounded-2xl p-6 sm:p-8 cursor-pointer bg-gray-50/60 transition text-center space-y-2">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-gray-900 flex items-center justify-center shadow-xs overflow-hidden border border-gray-200 group-hover:scale-105 transition-transform">
             <i data-lucide="image" id="defaultUploadIcon" class="w-6 h-6 sm:w-7 sm:h-7"></i>
             <img id="selfiePreviewImg" class="w-full h-full object-cover hidden" alt="Selfie Preview" />
           </div>
@@ -338,7 +130,7 @@
         </div>
 
         <button type="button" onclick="captureCameraShot()" class="w-full py-3 rounded-full bg-gray-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm active:scale-98">
-          <i data-lucide="camera" class="w-4 h-4 text-[#4285f4]"></i>
+          <i data-lucide="camera" class="w-4 h-4"></i>
           <span>Take Snapshot</span>
         </button>
       </div>
@@ -347,24 +139,26 @@
       <div id="scanProgressContainer" class="hidden space-y-2.5 p-3 sm:p-4 rounded-xl bg-gray-50 border border-gray-200">
         <div class="flex items-center justify-between text-xs font-medium">
           <span class="text-gray-700 flex items-center gap-2">
-            <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-[#4285f4]"></i>
+            <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
             <span>Computing 512D ArcFace Vector...</span>
           </span>
-          <span class="text-[#4285f4] font-bold">Matching</span>
+          <span class="text-gray-900 font-bold">Matching</span>
         </div>
-        <div class="google-4bar"></div>
+        <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full w-1/2 bg-gray-900 animate-pulse"></div>
+        </div>
         <p class="text-[10px] sm:text-[11px] text-gray-500 font-medium truncate">Comparing facial embeddings in RAM...</p>
       </div>
 
       <!-- Action Button -->
-      <button 
-        id="matchFaceBtn" 
-        type="button" 
-        onclick="executeFaceSearch()" 
-        disabled 
-        class="w-full py-3.5 rounded-full btn-google-highlight text-white text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-md"
+      <button
+        id="matchFaceBtn"
+        type="button"
+        onclick="executeFaceSearch()"
+        disabled
+        class="w-full py-3.5 rounded-full btn-editorial flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
         <span id="matchFaceBtnText">Scan & Find Photos</span>
       </button>
 
@@ -386,50 +180,7 @@
     <img id="lightboxImg" src="" alt="Full Preview" class="max-h-[82vh] max-w-[95vw] lg:max-w-[85vw] object-contain rounded-2xl shadow-2xl">
   </div>
 
-  <!-- ================= PROCEDURAL 4-COLOR CANVAS ================= -->
   <script>
-    const canvas = document.getElementById('googleMeshCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const nodes = [
-      { x: width * 0.2, y: height * 0.2, vx: 0.45, vy: 0.35, r: 340, color: 'rgba(66, 133, 244, 0.45)' },
-      { x: width * 0.8, y: height * 0.25, vx: -0.35, vy: 0.55, r: 350, color: 'rgba(234, 67, 53, 0.35)' },
-      { x: width * 0.75, y: height * 0.75, vx: -0.55, vy: -0.35, r: 330, color: 'rgba(251, 188, 5, 0.35)' },
-      { x: width * 0.25, y: height * 0.7, vx: 0.4, vy: -0.45, r: 360, color: 'rgba(52, 168, 83, 0.45)' }
-    ];
-
-    function renderGoogleMesh() {
-      ctx.clearRect(0, 0, width, height);
-
-      nodes.forEach(n => {
-        n.x += n.vx;
-        n.y += n.vy;
-
-        if (n.x < width * 0.05 || n.x > width * 0.95) n.vx *= -1;
-        if (n.y < height * 0.05 || n.y > height * 0.95) n.vy *= -1;
-
-        const grad = ctx.createRadialGradient(n.x, n.y, 10, n.x, n.y, n.r);
-        grad.addColorStop(0, n.color);
-        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      requestAnimationFrame(renderGoogleMesh);
-    }
-    renderGoogleMesh();
-
     /* ================= GALLERY APPLICATION LOGIC ================= */
     let activeEvent = null;
     let allPhotos = [];
@@ -441,6 +192,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadPublicGallery();
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     });
 
     function getEventIdentifier() {
@@ -467,14 +219,9 @@
         allPhotos = data.photos || activeEvent.photos || [];
 
         const title = activeEvent.name || activeEvent.event_name || 'Event Photos';
-        document.getElementById('gallerySubtitle').innerHTML = `
-          <span class="w-2 h-2 rounded-full bg-[#34a853] inline-block animate-pulse"></span> ${escapeHtml(title)} • ${allPhotos.length} Photos
-        `;
-
-        if (allPhotos.length > 0) {
-          const navBtn = document.getElementById('navDownloadAllBtn');
-          if (navBtn) navBtn.classList.remove('hidden');
-        }
+        document.getElementById('navBrand').innerText = title.toUpperCase();
+        document.getElementById('galleryHeadline').innerText = title;
+        document.getElementById('gallerySubtitle').innerText = `[ ${allPhotos.length} photo${allPhotos.length === 1 ? '' : 's'} ]`;
 
         renderPhotos(allPhotos);
       } catch (err) {
@@ -489,11 +236,11 @@
 
       if (!photos || photos.length === 0) {
         container.innerHTML = `
-          <div class="google-card text-center py-16 sm:py-20 px-4 sm:px-6 max-w-md mx-auto space-y-3">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-50 text-[#1a73e8] flex items-center justify-center mx-auto border border-blue-100">
+          <div class="editorial-card text-center py-16 sm:py-20 px-4 sm:px-6 max-w-md mx-auto space-y-3">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-50 text-gray-800 flex items-center justify-center mx-auto border border-gray-200">
               <i data-lucide="camera-off" class="w-6 h-6"></i>
             </div>
-            <h3 class="text-sm sm:text-base font-bold text-gray-900">No Photos Found</h3>
+            <h3 class="editorial-title text-base">No Photos Found</h3>
             <p class="text-xs text-gray-500 font-medium">No matching photos found in this view.</p>
           </div>
         `;
@@ -510,68 +257,29 @@
 
       Object.keys(groups).forEach(folderName => {
         const list = groups[folderName];
-        const section = document.createElement('section');
-        section.className = 'google-card p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-5';
+        const wrap = document.createElement('section');
+        wrap.className = 'mb-2';
 
-        const headerIcon = customHeading ? `
-          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl p-[1.5px] bg-gradient-to-tr from-[#4285F4] via-[#EA4335] to-[#34A853] shadow-xs shrink-0">
-            <div class="w-full h-full rounded-[10px] bg-white flex items-center justify-center p-1">
-              <svg class="w-full h-full" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="16" stroke="#c2d7fc" stroke-width="2.5" stroke-dasharray="2 2" />
-                <line x1="24" y1="11" x2="33" y2="17" stroke="#EA4335" stroke-width="3" stroke-linecap="round" />
-                <line x1="33" y1="17" x2="27" y2="21" stroke="#EA4335" stroke-width="3" stroke-linecap="round" />
-                <line x1="37" y1="24" x2="31" y2="33" stroke="#FBBC05" stroke-width="3" stroke-linecap="round" />
-                <line x1="31" y1="33" x2="27" y2="27" stroke="#FBBC05" stroke-width="3" stroke-linecap="round" />
-                <line x1="24" y1="37" x2="15" y2="31" stroke="#34A853" stroke-width="3" stroke-linecap="round" />
-                <line x1="15" y1="31" x2="21" y2="27" stroke="#34A853" stroke-width="3" stroke-linecap="round" />
-                <line x1="11" y1="24" x2="17" y2="15" stroke="#4285F4" stroke-width="3" stroke-linecap="round" />
-                <line x1="17" y1="15" x2="21" y2="21" stroke="#4285F4" stroke-width="3" stroke-linecap="round" />
-                <circle cx="24" cy="24" r="4.5" fill="#4285F4" />
-                <circle cx="24" cy="24" r="2" fill="#ffffff" opacity="0.8" />
-              </svg>
-            </div>
+        const heading = Object.keys(groups).length > 1 || customHeading ? `
+          <div class="max-w-[1400px] mx-auto px-6 pt-6 pb-3 flex items-center justify-between">
+            <h2 class="editorial-title text-sm">${escapeHtml(folderName)}</h2>
+            <span class="editorial-label">${list.length} photo(s)</span>
           </div>
-        ` : `
-          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-[#1a73e8] border border-blue-100 flex items-center justify-center shadow-xs shrink-0">
-            <i data-lucide="folder" class="w-4 h-4"></i>
-          </div>
-        `;
+        ` : '';
 
-        section.innerHTML = `
-          <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-            <div class="flex items-center gap-3">
-              ${headerIcon}
-              <div>
-                <h3 class="text-xs sm:text-base font-bold text-gray-900">${escapeHtml(folderName)}</h3>
-                <p class="text-[10px] sm:text-xs font-semibold text-gray-400">${list.length} photo(s)</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3.5 lg:gap-4 pt-1">
+        wrap.innerHTML = `
+          ${heading}
+          <div class="photo-grid-editorial">
             ${list.map((photo) => {
               const src = photo.url || photo.file_path || (typeof photo === 'string' ? photo : '');
               const filename = photo.filename || src.split('/').pop() || 'photo.jpg';
               return `
-                <div class="group relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 border ${customHeading ? 'border-[#4285f4] shadow-md shadow-blue-500/15' : 'border-gray-200'} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
-                  <img 
-                    src="${src}" 
-                    alt="Event Photo" 
-                    loading="lazy" 
-                    onclick="openLightbox('${src}', '${filename}')"
-                    class="w-full h-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105"
-                  >
-
-                  <button 
-                    onclick="event.stopPropagation(); downloadSingleImage('${src}', '${filename}')"
-                    title="Download Photo"
-                    class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 hover:bg-white text-gray-800 flex items-center justify-center opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-md cursor-pointer border border-gray-200 hover:scale-105"
-                  >
-                    <i data-lucide="download" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1a73e8]"></i>
-                  </button>
-
-                  <div onclick="openLightbox('${src}', '${filename}')" class="hidden sm:flex absolute bottom-2.5 left-2.5 p-1.5 rounded-full bg-white/80 text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity shadow-xs cursor-pointer">
-                    <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                <div class="photo-tile" onclick="openLightbox('${src}', '${filename}')">
+                  <img src="${src}" alt="Event Photo" loading="lazy">
+                  <div class="photo-tile-overlay">
+                    <button onclick="event.stopPropagation(); downloadSingleImage('${src}', '${filename}')" title="Download Photo" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-gray-900 flex items-center justify-center shadow cursor-pointer">
+                      <i data-lucide="download" class="w-4 h-4"></i>
+                    </button>
                   </div>
                 </div>
               `;
@@ -579,7 +287,7 @@
           </div>
         `;
 
-        container.appendChild(section);
+        container.appendChild(wrap);
       });
 
       if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -618,12 +326,12 @@
 
       const desktopBtn = document.getElementById('navDownloadAllBtn');
       const mobileBtn = document.getElementById('mobileNavZipBtn');
-      
+
       const setBtnLoading = (btn) => {
         if (!btn) return '';
         const prev = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> <span>Creating ZIP...</span>`;
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>`;
         return prev;
       };
 
@@ -702,14 +410,14 @@
     }
 
     function renderErrorState(message) {
-      document.getElementById('gallerySubtitle').innerText = 'Connection error';
+      document.getElementById('gallerySubtitle').innerText = '[ Connection error ]';
       document.getElementById('photosContainer').innerHTML = `
-        <div class="google-card text-center py-16 sm:py-20 px-4 sm:px-6 max-w-md mx-auto space-y-3">
-          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-50 text-[#ea4335] flex items-center justify-center mx-auto border border-red-100">
+        <div class="editorial-card text-center py-16 sm:py-20 px-4 sm:px-6 max-w-md mx-auto space-y-3">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center mx-auto border border-red-100">
             <i data-lucide="alert-triangle" class="w-6 h-6"></i>
           </div>
-          <h3 class="text-sm sm:text-base font-bold text-gray-900">Gallery Unavailable</h3>
-          <p class="text-xs text-[#ea4335] font-semibold">${escapeHtml(message)}</p>
+          <h3 class="editorial-title text-base">Gallery Unavailable</h3>
+          <p class="text-xs text-red-500 font-semibold">${escapeHtml(message)}</p>
         </div>
       `;
       if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -921,5 +629,6 @@
       return div.innerHTML;
     }
   </script>
+  <script src="bg-scroll.js"></script>
 </body>
 </html>

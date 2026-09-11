@@ -1,0 +1,213 @@
+/* ============================================================
+   Shared "Light + 3D" theme for WORKSPACE.AI web pages
+   Used by: index.html, welcome.html, workspace.html, events.html, event-detail.html
+   Design language: soft elevation (multi-layer shadows), inset
+   highlight edges for a "raised surface" feel, gradient sheens,
+   color-matched glow on interactive elements.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --g-blue: #4285f4;
+  --g-red: #ea4335;
+  --g-yellow: #fbbc05;
+  --g-green: #34a853;
+  --bg: #eef2fa;
+  --bg-2: #f7f9fd;
+  --surface: #ffffff;
+  --border: #e4e8f0;
+  --border-strong: #d6dceb;
+  --text: #14171f;
+  --text-muted: #5b6472;
+  --text-faint: #8a92a3;
+
+  /* Elevation tiers: each pairs a tight contact shadow with a soft ambient one */
+  --e1: 0 1px 2px rgba(20, 30, 60, 0.05), 0 2px 6px rgba(20, 30, 60, 0.05);
+  --e2: 0 2px 4px rgba(20, 30, 60, 0.06), 0 12px 28px rgba(20, 30, 60, 0.09);
+  --e3: 0 4px 10px rgba(20, 30, 60, 0.08), 0 24px 48px rgba(20, 30, 60, 0.14);
+}
+
+body {
+  background:
+    radial-gradient(ellipse 1200px 500px at 15% -10%, rgba(66, 133, 244, 0.10), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 0%, rgba(234, 67, 53, 0.06), transparent 55%),
+    var(--bg);
+  font-family: 'Manrope', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-cinematic {
+  font-family: 'Manrope', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.13em;
+  font-weight: 800;
+}
+
+/* Soft drifting gradient mesh backdrop (lightweight, no WebGL) */
+#meshCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(90px);
+  opacity: 0.4;
+}
+
+.google-border-top {
+  background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
+  height: 3px;
+  width: 100%;
+}
+
+/* ---------- Surfaces (raised 3D cards) ----------
+   Layered shadow = depth. An inset top highlight + 1px border
+   reads as a subtle bevel, like a physical card edge catching light. */
+.card-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--e2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.28s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.card-3d:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--e3), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.panel-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--e2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.nav-3d {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 8px 24px rgba(20, 30, 60, 0.06);
+}
+
+.modal-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 30px 70px rgba(20, 25, 45, 0.24), 0 10px 24px rgba(20, 25, 45, 0.12);
+}
+
+.drawer-3d {
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -30px 0 70px rgba(20, 25, 45, 0.16);
+}
+
+/* ---------- Buttons: glossy gradient + color-matched glow, tactile press ---------- */
+.btn-3d-primary {
+  background: linear-gradient(180deg, #5b9dfd 0%, #1a73e8 55%, #1660c4 100%);
+  color: #ffffff;
+  border: 1px solid #1660c4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 0 #1457ab,
+    0 3px 8px rgba(26, 115, 232, 0.28),
+    0 10px 22px rgba(26, 115, 232, 0.24);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.btn-3d-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.btn-3d-primary:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 0 #1457ab, 0 2px 6px rgba(26, 115, 232, 0.3);
+}
+.btn-3d-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-3d-ghost {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafd 100%);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--e1);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+.btn-3d-ghost:hover { background: #f3f6fc; border-color: #c7d0e2; }
+.btn-3d-ghost:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(20, 30, 60, 0.06);
+}
+
+.btn-3d-danger {
+  background: linear-gradient(180deg, #ffffff 0%, #fef4f3 100%);
+  color: var(--g-red);
+  border: 1px solid #f6c9c3;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 8px rgba(234, 67, 53, 0.14);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-3d-danger:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(234, 67, 53, 0.14); }
+
+/* ---------- 3D logo badge: floating with a real cast shadow ---------- */
+.logo-badge-3d {
+  filter: drop-shadow(0 10px 16px rgba(66, 133, 244, 0.3)) drop-shadow(0 2px 4px rgba(20, 30, 60, 0.12));
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.logo-badge-3d:hover { transform: perspective(500px) rotateY(14deg) rotateX(-7deg) scale(1.03); }
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.float-3d { animation: floatY 4.5s ease-in-out infinite; }
+
+/* ---------- Loading sweep bar (light variant) ---------- */
+@keyframes sweepGlowLight {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(30%); }
+  100% { transform: translateX(100%); }
+}
+.sweep-bar-light {
+  height: 4px;
+  width: 170px;
+  background: #e8eaf3;
+  overflow: hidden;
+  position: relative;
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 2px rgba(20, 30, 60, 0.08);
+}
+.sweep-bar-light::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 55%;
+  background: linear-gradient(90deg, #4285f4 0%, #a855f7 40%, #38bdf8 80%, #1a73e8 100%);
+  animation: sweepGlowLight 1.4s infinite ease-in-out;
+  border-radius: 9999px;
+  box-shadow: 0 0 10px rgba(66, 133, 244, 0.5);
+}
+
+@keyframes lightEntrance {
+  0% { opacity: 0; filter: blur(8px); transform: translateY(16px) scale(0.97); }
+  20%, 82% { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
+  100% { opacity: 0; filter: blur(10px); transform: translateY(-10px) scale(1.02); }
+}
+.animate-light-entrance { animation: lightEntrance 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* ---------- Status pills: subtle inset for a chip-in-a-slot feel ---------- */
+.pill-3d {
+  box-shadow: inset 0 1px 2px rgba(20, 30, 60, 0.06);
+}
+
+/* ---------- Inputs: recessed field with soft inner shadow (3D "pressed in" feel) ---------- */
+.input-3d {
+  background: #f7f9fd;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 3px rgba(20, 30, 60, 0.06);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.input-3d:focus {
+  background: #ffffff;
+  border-color: var(--g-blue);
+  box-shadow: inset 0 1px 3px rgba(20, 30, 60, 0.04), 0 0 0 3px rgba(66, 133, 244, 0.14);
+}

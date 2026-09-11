@@ -1,0 +1,232 @@
+/* ============================================================
+   Editorial "Photography Portfolio" theme
+   Big thin uppercase headlines, plain top nav (logo + links +
+   actions, no sidebar), full-bleed photo grid. Monochrome first,
+   with the brand blue kept only as a small accent.
+   Layers on top of theme.css (buttons/inputs/modals still used).
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@100;200;300;400;500&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --ed-bg: #f7f7f5;
+  --ed-surface: #ffffff;
+  --ed-ink: #111111;
+  --ed-ink-soft: #6b6b68;
+  --ed-line: #e7e7e3;
+  --ed-accent: #4285f4;
+}
+
+body.editorial {
+  background: var(--ed-bg);
+  color: var(--ed-ink);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Plain top navigation (logo + links + actions) ---------- */
+.nav-editorial {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(247, 247, 245, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--ed-line);
+}
+.nav-editorial-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.nav-logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--ed-line);
+  background: var(--ed-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ed-ink);
+  flex-shrink: 0;
+}
+.nav-logo-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  color: var(--ed-ink);
+  white-space: nowrap;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.nav-links a, .nav-link-btn {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ed-ink-soft);
+  transition: color 0.15s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.nav-links a:hover, .nav-links a.active, .nav-link-btn:hover { color: var(--ed-ink); }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---------- Big thin headline block ---------- */
+.editorial-hero {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 56px 24px 32px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Everything else in the page flow needs to sit above the fixed
+   bg-scroll overlay (z-index:1) too — it has no natural stacking
+   context of its own since it's appended as the last body child. */
+body.editorial > main,
+body.editorial > #filterRibbon {
+  position: relative;
+  z-index: 2;
+}
+.headline-thin {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 100;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  color: var(--ed-ink);
+  font-size: clamp(2.6rem, 8vw, 6.2rem);
+  word-break: break-word;
+}
+.tag-bracket {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ed-ink-soft);
+}
+
+@media (max-width: 640px) {
+  .editorial-hero { padding: 36px 18px 24px; text-align: left; }
+}
+
+/* ---------- Full-bleed photo grid ---------- */
+.photo-grid-editorial {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 6px 60px;
+}
+@media (max-width: 1100px) { .photo-grid-editorial { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) { .photo-grid-editorial { grid-template-columns: repeat(2, 1fr); gap: 4px; } }
+@media (max-width: 420px) { .photo-grid-editorial { grid-template-columns: 1fr; } }
+
+.photo-tile {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #e9e9e6;
+  cursor: pointer;
+}
+.photo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+.photo-tile:hover img { transform: scale(1.045); }
+.photo-tile-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.45) 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 10px;
+}
+.photo-tile:hover .photo-tile-overlay { opacity: 1; }
+
+/* ---------- Minimal editorial cards (replaces pastel tiles) ---------- */
+.editorial-card {
+  background: var(--ed-surface);
+  border: 1px solid var(--ed-line);
+  border-radius: 4px;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.editorial-card:hover {
+  border-color: #d3d3ce;
+  box-shadow: 0 14px 30px rgba(17, 17, 17, 0.06);
+  transform: translateY(-2px);
+}
+.editorial-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ed-ink-soft);
+}
+.editorial-title {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 1.05rem;
+  color: var(--ed-ink);
+}
+
+/* ---------- Monochrome button override (site's primary CTA) ---------- */
+.btn-editorial {
+  background: var(--ed-ink);
+  color: #fff;
+  border: 1px solid var(--ed-ink);
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.btn-editorial:hover { opacity: 0.85; transform: translateY(-1px); }
+.btn-editorial:active { transform: translateY(1px); }
+
+.btn-editorial-outline {
+  background: transparent;
+  color: var(--ed-ink);
+  border: 1px solid var(--ed-ink);
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.btn-editorial-outline:hover { background: var(--ed-ink); color: #fff; }

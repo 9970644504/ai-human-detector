@@ -38,6 +38,18 @@ async function getDb() {
     );
   `);
 
+  // Migration: add columns that pre-existing users tables may predate
+  try {
+    await dbInstance.exec(`ALTER TABLE users ADD COLUMN avatar_url TEXT`);
+  } catch (e) {
+    // Column already exists — safe to ignore
+  }
+  try {
+    await dbInstance.exec(`ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'photographer'`);
+  } catch (e) {
+    // Column already exists — safe to ignore
+  }
+
   // 2. Events / Galleries table (Multi-tenant scoped by user_id)
   await dbInstance.exec(`
     CREATE TABLE IF NOT EXISTS events (

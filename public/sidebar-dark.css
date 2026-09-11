@@ -1,0 +1,207 @@
+/* ============================================================
+   Persistent dark dashboard sidebar (workspace.html only)
+   ============================================================ */
+
+.dashboard-shell {
+  display: flex;
+  min-height: 100vh;
+  /* Raise the whole shell above the fixed bg-scroll overlay (z-index:1) —
+     it's the direct body child now, not a bare <main>, so editorial.css's
+     "body.editorial > main" stacking fix doesn't reach it on its own. */
+  position: relative;
+  z-index: 2;
+}
+
+.dashboard-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 248px;
+  /* Frosted glass, not a solid panel — a hint of the scrolling photo
+     wall shows through, but dark and opaque enough to stay readable. */
+  background: rgba(10, 12, 17, 0.88);
+  backdrop-filter: blur(26px) saturate(1.15);
+  -webkit-backdrop-filter: blur(26px) saturate(1.15);
+  color: #e6e7eb;
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-content {
+  flex: 1;
+  min-width: 0;
+  margin-left: 248px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-sidebar { width: 76px; }
+  .dashboard-content { margin-left: 76px; }
+  .sidebar-label { display: none; }
+  .sidebar-brand-text { display: none; }
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.sidebar-logo-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+.sidebar-brand-text {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 300;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #b4b7c2;
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+.sidebar-link:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.sidebar-link.active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  background: #fff;
+  border-radius: 0 3px 3px 0;
+}
+.sidebar-link i { flex-shrink: 0; }
+
+.sidebar-footer {
+  padding: 14px 12px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sidebar-account-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-bottom: 8px;
+}
+.sidebar-account-btn:hover { background: rgba(255, 255, 255, 0.08); }
+
+.sidebar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #101218;
+  font-weight: 800;
+  font-size: 0.75rem;
+  font-family: 'Archivo', sans-serif;
+}
+.sidebar-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-account-info {
+  min-width: 0;
+  text-align: left;
+}
+.sidebar-account-info p:first-child {
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-account-info p:last-child {
+  font-size: 0.66rem;
+  color: #7d818c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px;
+  border-radius: 10px;
+  background: transparent;
+  color: #9a9ea8;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.sidebar-logout-btn:hover {
+  background: rgba(234, 67, 53, 0.12);
+  color: #f28b7e;
+  border-color: rgba(234, 67, 53, 0.25);
+}

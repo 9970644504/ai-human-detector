@@ -1,0 +1,62 @@
+/* ============================================================
+   Scrolling photo-wall background
+   Multiple columns of images drift continuously upward (bottom
+   to top), sitting behind all page content. An overlay tint on
+   top keeps foreground text fully readable ("clear").
+   ============================================================ */
+
+.bg-scroll-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-scroll-columns {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.bg-scroll-col {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  will-change: transform;
+  animation-name: bgScrollUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.bg-scroll-col img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(30%) contrast(1.04) brightness(0.92);
+  border-radius: 2px;
+}
+
+@keyframes bgScrollUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+/* Overlay tint — matches each page's background so the wall reads
+   as a subtle ambient backdrop, not a distraction. Override
+   --bg-scroll-tint per page if the base background differs. */
+.bg-scroll-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--bg-scroll-tint, rgba(247, 247, 245, 0.88));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-scroll-col { animation: none; }
+}

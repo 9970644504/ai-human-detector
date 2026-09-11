@@ -1,10 +1,37 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const getDb = require('../config/db');
 const { JWT_SECRET, requireAuth } = require('../middleware/authMiddleware');
 
 const router = express.Router();
+
+// -------------------------------------------------------------
+// Avatar upload storage — one file per user, old one replaced
+// -------------------------------------------------------------
+const avatarsDir = path.join(__dirname, '..', 'uploads', 'avatars');
+if (!fs.existsSync(avatarsDir)) {
+  fs.mkdirSync(avatarsDir, { recursive: true });
+}
+
+const avatarUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, avatarsDir),
+    filename: (req, file, cb) => {
+      const userId = req.user.id || req.user.userId;
+      const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+      cb(null, `${userId}_${Date.now()}${ext}`);
+    }
+  }),
+  limits: { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const ok = ['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype);
+    cb(ok ? null : new Error('Only JPEG, PNG or WEBP images are allowed.'), ok);
+  }
+}).single('avatar');
 
 // Helper cookie settings for cross-page compatibility
 const COOKIE_OPTIONS = {
@@ -78,7 +105,7 @@ router.post('/register', async (req, res) => {
       success: true,
       message: 'Photographer account registered successfully.',
       token,
-      user: { id: userId, name: cleanName, email: cleanEmail, role: userRole }
+      user: { id: userId, name: cleanName, email: cleanEmail, role: userRole, avatar_url: null }
     });
 
   } catch (err) {
@@ -131,7 +158,7 @@ router.post('/login', async (req, res) => {
       success: true,
       message: 'Login successful.',
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: assignedRole }
+      user: { id: user.id, name: user.name, email: user.email, role: assignedRole, avatar_url: user.avatar_url || null }
     });
 
   } catch (err) {
@@ -147,7 +174,7 @@ router.get('/me', requireAuth, async (req, res) => {
   try {
     const db = await getDb();
     const userId = req.user.id || req.user.userId;
-    const user = await db.get('SELECT id, name, email, role, created_at FROM users WHERE id = ?', [userId]);
+    const user = await db.get('SELECT id, name, email, role, avatar_url, created_at FROM users WHERE id = ?', [userId]);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User session not found.' });
@@ -157,6 +184,42 @@ router.get('/me', requireAuth, async (req, res) => {
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Failed to verify session.' });
   }
+});
+
+// -------------------------------------------------------------
+// POST /api/auth/avatar — Upload / replace profile photo
+// -------------------------------------------------------------
+router.post('/avatar', requireAuth, (req, res) => {
+  avatarUpload(req, res, async (uploadErr) => {
+    if (uploadErr) {
+      return res.status(400).json({ success: false, message: uploadErr.message || 'Avatar upload failed.' });
+    }
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file received.' });
+    }
+
+    try {
+      const db = await getDb();
+      const userId = req.user.id || req.user.userId;
+
+      // Remove the previous avatar file from disk, if any, so they don't pile up
+      const existing = await db.get('SELECT avatar_url FROM users WHERE id = ?', [userId]);
+      if (existing && existing.avatar_url) {
+        const oldPath = path.join(__dirname, '..', existing.avatar_url.replace(/^\/+/, ''));
+        if (fs.existsSync(oldPath)) {
+          try { fs.unlinkSync(oldPath); } catch (e) {}
+        }
+      }
+
+      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      await db.run('UPDATE users SET avatar_url = ? WHERE id = ?', [avatarUrl, userId]);
+
+      return res.status(200).json({ success: true, message: 'Profile photo updated.', avatar_url: avatarUrl });
+    } catch (err) {
+      console.error('[Avatar Upload Error]:', err);
+      return res.status(500).json({ success: false, message: 'Failed to save profile photo.' });
+    }
+  });
 });
 
 // -------------------------------------------------------------

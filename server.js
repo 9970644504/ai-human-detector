@@ -15,8 +15,9 @@ const uploadBaseDir = path.join(__dirname, 'uploads');
 const tempPhotosDir = path.join(__dirname, 'uploads', 'temp_photos');
 const tempZipDir = path.join(__dirname, 'uploads', 'temp_zips');
 const tempSelfieDir = path.join(__dirname, 'uploads', 'temp_selfies');
+const avatarsDir = path.join(__dirname, 'uploads', 'avatars');
 
-[uploadBaseDir, tempPhotosDir, tempZipDir, tempSelfieDir].forEach((dir) => {
+[uploadBaseDir, tempPhotosDir, tempZipDir, tempSelfieDir, avatarsDir].forEach((dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
